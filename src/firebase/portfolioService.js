@@ -64,10 +64,19 @@ export const DEFAULT_PROJECTS = [
   },
 ];
 
-const profileRef = doc(db, "portfolio", "profile");
-const skillsRef = doc(db, "portfolio", "skills");
-const projectsCol = collection(db, "projects");
-const messagesCol = collection(db, "messages");
+const profileRef = () => doc(requireDb(), "portfolio", "profile");
+const skillsRef = () => doc(requireDb(), "portfolio", "skills");
+const projectsCol = () => collection(requireDb(), "projects");
+const messagesCol = () => collection(requireDb(), "messages");
+
+function requireDb() {
+  if (!db) {
+    const error = new Error("Firebase yapilandirmasi eksik.");
+    error.code = "firebase/not-configured";
+    throw error;
+  }
+  return db;
+}
 
 async function withFirestoreRetry(operation, retries = 4) {
   let lastError;
@@ -128,28 +137,28 @@ function mapMessageDoc(item) {
 }
 
 async function ensureDefaults() {
-  const profileSnap = await withFirestoreRetry(() => getDoc(profileRef));
+  const profileSnap = await withFirestoreRetry(() => getDoc(profileRef()));
   if (!profileSnap.exists()) {
-    await withFirestoreRetry(() => setDoc(profileRef, DEFAULT_PROFILE));
+    await withFirestoreRetry(() => setDoc(profileRef(), DEFAULT_PROFILE));
   }
 
-  const skillsSnap = await withFirestoreRetry(() => getDoc(skillsRef));
+  const skillsSnap = await withFirestoreRetry(() => getDoc(skillsRef()));
   if (!skillsSnap.exists()) {
-    await withFirestoreRetry(() => setDoc(skillsRef, { categories: DEFAULT_SKILLS }));
+    await withFirestoreRetry(() => setDoc(skillsRef(), { categories: DEFAULT_SKILLS }));
   }
 
-  const existingProjects = await withFirestoreRetry(() => getDocs(projectsCol));
+  const existingProjects = await withFirestoreRetry(() => getDocs(projectsCol()));
   if (existingProjects.empty) {
     for (const project of DEFAULT_PROJECTS) {
       await withFirestoreRetry(() =>
-        addDoc(projectsCol, {
+        addDoc(projectsCol(), {
           ...project,
           createdAt: serverTimestamp(),
         })
       );
     }
     await withFirestoreRetry(() =>
-      setDoc(doc(db, "portfolio", "seeded"), { done: true }, { merge: true })
+      setDoc(doc(requireDb(), "portfolio", "seeded"), { done: true }, { merge: true })
     );
   }
 }
@@ -164,6 +173,15 @@ export async function seedDefaultsIfNeeded() {
 }
 
 export function subscribePortfolioData(callbacks) {
+  if (!db) {
+    callbacks.onProfile?.(DEFAULT_PROFILE);
+    callbacks.onSkills?.(DEFAULT_SKILLS);
+    callbacks.onProjects?.([]);
+    callbacks.onMessages?.([]);
+    callbacks.onReady?.();
+    return () => {};
+  }
+
   let unsubProfile;
   let unsubSkills;
   let unsubProjects;
@@ -183,7 +201,7 @@ export function subscribePortfolioData(callbacks) {
   };
 
   unsubProfile = onSnapshot(
-    profileRef,
+    profileRef(),
     (snap) => {
       callbacks.onProfile(snap.exists() ? snap.data() : DEFAULT_PROFILE);
       markReady();
@@ -192,7 +210,7 @@ export function subscribePortfolioData(callbacks) {
   );
 
   unsubSkills = onSnapshot(
-    skillsRef,
+    skillsRef(),
     (snap) => {
       callbacks.onSkills(snap.exists() ? snap.data().categories : DEFAULT_SKILLS);
       markReady();
@@ -201,7 +219,7 @@ export function subscribePortfolioData(callbacks) {
   );
 
   unsubProjects = onSnapshot(
-    projectsCol,
+    projectsCol(),
     (snap) => {
       const projects = sortByNewest(snap.docs.map(mapProjectDoc));
       callbacks.onProjects(projects);
@@ -211,7 +229,7 @@ export function subscribePortfolioData(callbacks) {
   );
 
   unsubMessages = onSnapshot(
-    messagesCol,
+    messagesCol(),
     (snap) => {
       const messages = sortByNewest(snap.docs.map(mapMessageDoc));
       callbacks.onMessages(messages);
@@ -232,7 +250,7 @@ export function subscribePortfolioData(callbacks) {
 }
 
 export async function updateProfile(data) {
-  await setDoc(profileRef, data, { merge: true });
+  await setDoc(profileRef(), data, { merge: true });
 }
 
 export async function uploadProfileImage(file, type = "profile") {
@@ -241,12 +259,12 @@ export async function uploadProfileImage(file, type = "profile") {
   await uploadBytes(storageRef, file);
   const url = await getDownloadURL(storageRef);
   const field = type === "about" ? "aboutImageUrl" : "profileImageUrl";
-  await setDoc(profileRef, { [field]: url }, { merge: true });
+  await setDoc(profileRef(), { [field]: url }, { merge: true });
   return url;
 }
 
 export async function fetchProjects() {
-  const snap = await withFirestoreRetry(() => getDocs(projectsCol));
+  const snap = await withFirestoreRetry(() => getDocs(projectsCol()));
   return sortByNewest(snap.docs.map(mapProjectDoc));
 }
 
@@ -258,7 +276,7 @@ export async function testFirestoreWrite() {
   }
 
   const docRef = await withFirestoreRetry(() =>
-    addDoc(projectsCol, {
+    addDoc(projectsCol(), {
       title: "Firestore Baglanti Testi",
       description: "Bu kayit admin panelinden otomatik olusturuldu.",
       tech: ["Test"],
@@ -273,7 +291,7 @@ export async function testFirestoreWrite() {
 
 export async function addProject(project) {
   const docRef = await withFirestoreRetry(() =>
-    addDoc(projectsCol, {
+    addDoc(projectsCol(), {
       ...project,
       link: normalizeExternalUrl(project.link) || "#",
       imageUrl: normalizeImageUrl(project.imageUrl || ""),
@@ -285,7 +303,7 @@ export async function addProject(project) {
 }
 
 export async function deleteProject(id) {
-  await deleteDoc(doc(db, "projects", id));
+  await deleteDoc(doc(requireDb(), "projects", id));
 }
 
 export async function uploadProjectImage(projectId, file) {
@@ -296,7 +314,7 @@ export async function uploadProjectImage(projectId, file) {
   });
   const imageUrl = await getDownloadURL(storageRef);
   await withFirestoreRetry(() =>
-    updateDoc(doc(db, "projects", projectId), { imageUrl })
+    updateDoc(doc(requireDb(), "projects", projectId), { imageUrl })
   );
   return imageUrl;
 }
@@ -309,15 +327,15 @@ export async function updateProject(projectId, data) {
   if (typeof payload.imageUrl === "string") {
     payload.imageUrl = normalizeImageUrl(payload.imageUrl);
   }
-  await withFirestoreRetry(() => updateDoc(doc(db, "projects", projectId), payload));
+  await withFirestoreRetry(() => updateDoc(doc(requireDb(), "projects", projectId), payload));
 }
 
 export async function updateSkills(categories) {
-  await setDoc(skillsRef, { categories }, { merge: true });
+  await setDoc(skillsRef(), { categories }, { merge: true });
 }
 
 export async function addMessage(message) {
-  await addDoc(messagesCol, {
+  await addDoc(messagesCol(), {
     ...message,
     read: false,
     createdAt: serverTimestamp(),
@@ -325,9 +343,9 @@ export async function addMessage(message) {
 }
 
 export async function markMessageAsRead(id) {
-  await updateDoc(doc(db, "messages", id), { read: true });
+  await updateDoc(doc(requireDb(), "messages", id), { read: true });
 }
 
 export async function deleteMessage(id) {
-  await deleteDoc(doc(db, "messages", id));
+  await deleteDoc(doc(requireDb(), "messages", id));
 }

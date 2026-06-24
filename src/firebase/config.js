@@ -19,11 +19,16 @@ const firebaseConfig = {
   appId: trim(import.meta.env.VITE_FIREBASE_APP_ID),
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+export function isFirebaseConfigured() {
+  return Boolean(
+    firebaseConfig.apiKey &&
+      firebaseConfig.authDomain &&
+      firebaseConfig.projectId &&
+      firebaseConfig.appId
+  );
+}
 
-export const auth = getAuth(app);
-
-function createFirestore() {
+function createFirestore(app) {
   try {
     return initializeFirestore(app, {
       experimentalForceLongPolling: true,
@@ -33,28 +38,31 @@ function createFirestore() {
   }
 }
 
-export const db = createFirestore();
-export const storage = getStorage(app);
+const app = isFirebaseConfigured()
+  ? getApps().length
+    ? getApp()
+    : initializeApp(firebaseConfig)
+  : null;
+
+export const auth = app ? getAuth(app) : null;
+export const db = app ? createFirestore(app) : null;
+export const storage = app ? getStorage(app) : null;
 
 export async function resetFirestoreConnection() {
+  if (!db) return;
+
   try {
     await disableNetwork(db);
   } catch {
-    // Ag zaten acik olabilir.
+    // Ag zaten kapali olabilir.
   }
   await enableNetwork(db);
 }
 
-resetFirestoreConnection().catch((error) => {
-  console.warn("Firestore baglantisi baslatilamadi:", error);
-});
-
-export function isFirebaseConfigured() {
-  return Boolean(
-    firebaseConfig.apiKey &&
-      firebaseConfig.projectId &&
-      firebaseConfig.appId
-  );
+if (db) {
+  resetFirestoreConnection().catch((error) => {
+    console.warn("Firestore baglantisi baslatilamadi:", error);
+  });
 }
 
 export const firebaseProjectId = firebaseConfig.projectId;

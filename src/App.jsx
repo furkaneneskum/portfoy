@@ -115,6 +115,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!auth) return undefined;
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsAdminAuthed(Boolean(user));
     });
@@ -380,9 +382,15 @@ export default function App() {
   );
 
   const renderFirebaseWarning = () => (
-    <div className="border-b border-red-500/30 bg-red-950/40 px-4 py-3 text-center text-sm text-red-200">
-      Firebase yapilandirmasi eksik. `.env.example` dosyasini `.env` olarak kopyalayip Firebase
-      bilgilerini doldur.
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="max-w-lg rounded-2xl border border-red-500/30 bg-red-950/40 p-6 text-center">
+        <p className="text-lg font-semibold text-red-200">Firebase yapilandirmasi eksik</p>
+        <p className="mt-3 text-sm text-red-100/90">
+          Lokal icin `.env` dosyasini doldur. GitHub Pages icin repo Settings → Secrets and
+          variables → Actions bolumune 6 adet `VITE_FIREBASE_*` secret ekle, sonra deploy&apos;u
+          yeniden calistir.
+        </p>
+      </div>
     </div>
   );
 
