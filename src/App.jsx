@@ -93,15 +93,15 @@ export default function App() {
   });
   const [contactStatus, setContactStatus] = useState({ type: "", text: "" });
   const [contactSubmitting, setContactSubmitting] = useState(false);
-  const [cvOpen, setCvOpen] = useState(false);
+  const [cvLocale, setCvLocale] = useState(null);
   const [adminNotice, setAdminNotice] = useState("");
   const [profileDraft, setProfileDraft] = useState(DEFAULT_PROFILE);
   const secretCodeBufferRef = useRef("");
 
   useEffect(() => {
-    if (!cvOpen) return undefined;
+    if (!cvLocale) return undefined;
     const onKeyDown = (event) => {
-      if (event.key === "Escape") setCvOpen(false);
+      if (event.key === "Escape") setCvLocale(null);
     };
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKeyDown);
@@ -109,7 +109,7 @@ export default function App() {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [cvOpen]);
+  }, [cvLocale]);
 
   useEffect(() => {
     if (!isFirebaseConfigured()) {
@@ -1314,7 +1314,7 @@ export default function App() {
         </div>
       )}
 
-      <Navbar profileName={profile.name} onOpenCv={() => setCvOpen(true)} />
+      <Navbar profileName={profile.name} onOpenCv={setCvLocale} />
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <section
@@ -1357,12 +1357,21 @@ export default function App() {
             </a>
             <button
               type="button"
-              onClick={() => setCvOpen(true)}
+              onClick={() => setCvLocale("tr")}
               className="group inline-flex items-center justify-center gap-2 rounded-xl border border-yellow-500/50 bg-transparent px-6 py-3 font-semibold text-yellow-400 transition-all duration-300 hover:scale-[1.03] hover:border-yellow-400 hover:bg-yellow-500/10 hover:shadow-[0_0_24px_rgba(250,204,21,0.2)]"
             >
               <FileText size={17} />
-              <span className="sm:hidden">CV</span>
-              <span className="hidden sm:inline">CV Görüntüle / İndir</span>
+              <span className="sm:hidden">CV (TR)</span>
+              <span className="hidden sm:inline">CV Görüntüle (TR)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setCvLocale("en")}
+              className="group inline-flex items-center justify-center gap-2 rounded-xl border border-yellow-500/40 bg-slate-800/70 px-6 py-3 font-semibold text-yellow-400 backdrop-blur-md transition-all duration-300 hover:scale-[1.03] hover:bg-slate-700/70 hover:shadow-[0_0_24px_rgba(250,204,21,0.25)]"
+            >
+              <FileText size={17} />
+              <span className="sm:hidden">CV (EN)</span>
+              <span className="hidden sm:inline">View CV (EN)</span>
             </button>
             <a
               href="#iletisim"
@@ -1506,7 +1515,12 @@ export default function App() {
         />
       </main>
 
-      <DigitalCv isOpen={cvOpen} onClose={() => setCvOpen(false)} profile={profile} />
+      <DigitalCv
+        isOpen={Boolean(cvLocale)}
+        locale={cvLocale || "tr"}
+        onClose={() => setCvLocale(null)}
+        profile={profile}
+      />
 
       <footer
         id="footer"
@@ -1524,11 +1538,19 @@ export default function App() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
-              onClick={() => setCvOpen(true)}
+              onClick={() => setCvLocale("tr")}
               className="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 px-4 py-2 text-sm text-yellow-400 transition-all duration-300 hover:bg-yellow-500 hover:text-slate-900"
             >
               <FileText size={16} />
-              CV
+              CV (TR)
+            </button>
+            <button
+              type="button"
+              onClick={() => setCvLocale("en")}
+              className="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 px-4 py-2 text-sm text-yellow-400 transition-all duration-300 hover:bg-yellow-500 hover:text-slate-900"
+            >
+              <FileText size={16} />
+              CV (EN)
             </button>
             {profile.email && (
               <a

@@ -5,7 +5,8 @@ const NAV_LINKS = [
   { label: "Hakkımda", href: "#hakkimda" },
   { label: "Yetenekler", href: "#yetenekler" },
   { label: "Projeler", href: "#projeler" },
-  { label: "CV", action: "cv" },
+  { label: "CV (TR)", action: "cv-tr" },
+  { label: "CV (EN)", action: "cv-en" },
   { label: "İletişim", href: "#iletisim" },
 ];
 
@@ -14,7 +15,8 @@ export default function Navbar({ profileName, onOpenCv }) {
 
   const handleNav = (item) => {
     setOpen(false);
-    if (item.action === "cv") onOpenCv();
+    if (item.action === "cv-tr") onOpenCv("tr");
+    if (item.action === "cv-en") onOpenCv("en");
   };
 
   return (
@@ -31,7 +33,7 @@ export default function Navbar({ profileName, onOpenCv }) {
           <span className="max-w-[140px] truncate sm:max-w-none">{profileName}</span>
         </a>
 
-        <ul className="hidden items-center gap-6 md:flex">
+        <ul className="hidden items-center gap-5 lg:gap-6 md:flex">
           {NAV_LINKS.map((item) => (
             <li key={item.label}>
               {item.href ? (
@@ -44,7 +46,7 @@ export default function Navbar({ profileName, onOpenCv }) {
               ) : (
                 <button
                   type="button"
-                  onClick={() => onOpenCv()}
+                  onClick={() => handleNav(item)}
                   className="text-sm text-gray-300 transition-all duration-300 hover:text-yellow-400"
                 >
                   {item.label}

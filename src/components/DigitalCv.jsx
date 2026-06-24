@@ -12,31 +12,10 @@ import {
   Wrench,
   X,
 } from "lucide-react";
+import { CV_LOCALES, CV_TOOLS } from "../data/cvContent";
 import { normalizeExternalUrl, resolveImageUrl } from "../utils/url";
 
 const DEFAULT_PHONE = "05428528282";
-
-const PROGRAMMING_SKILLS = [
-  { name: "Python", level: "İleri", percent: 85 },
-  { name: "JavaScript", level: "Orta-İleri", percent: 75 },
-  { name: "HTML / CSS", level: "Orta", percent: 70 },
-];
-
-const LANGUAGE_SKILLS = [
-  { name: "Türkçe", level: "Ana Dil", percent: 100 },
-  { name: "İngilizce", level: "İleri", percent: 85 },
-];
-
-const TOOLS = [
-  "React",
-  "Vite",
-  "Tailwind CSS",
-  "Firebase",
-  "Git",
-  "GitHub",
-  "Pandas",
-  "Matplotlib",
-];
 
 function SidebarHeading({ icon: Icon, title }) {
   return (
@@ -73,11 +52,11 @@ function MainHeading({ icon: Icon, title }) {
   );
 }
 
-export default function DigitalCv({ isOpen, onClose, profile }) {
+export default function DigitalCv({ isOpen, onClose, profile, locale = "tr" }) {
   if (!isOpen) return null;
 
+  const content = CV_LOCALES[locale] || CV_LOCALES.tr;
   const displayName = profile.name || "Furkan Enes Kum";
-  const displayTitle = "Yazılım Mühendisi (Öğrenci)";
   const email = profile.email?.trim() || "";
   const phone = profile.phone?.trim() || DEFAULT_PHONE;
   const github = normalizeExternalUrl(profile.github);
@@ -91,7 +70,7 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
   const contactItems = [
     {
       icon: Mail,
-      label: email || "E-posta eklenmedi",
+      label: email || content.emailMissing,
       href: email ? `mailto:${email}` : null,
     },
     {
@@ -101,12 +80,12 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
     },
     {
       icon: Linkedin,
-      label: "LinkedIn Profili",
+      label: content.linkedinLabel,
       href: linkedin && linkedin !== "#" ? linkedin : null,
     },
     {
       icon: Github,
-      label: "GitHub Profili",
+      label: content.githubLabel,
       href: github && github !== "#" ? github : null,
     },
   ];
@@ -124,7 +103,9 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 no-print">
-          <p className="text-sm tracking-[0.16em] text-yellow-400 uppercase">Dijital CV</p>
+          <p className="text-sm tracking-[0.16em] text-yellow-400 uppercase">
+            {content.modalTitle}
+          </p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -132,7 +113,7 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
               className="inline-flex items-center gap-2 rounded-xl border border-yellow-500/40 bg-yellow-500/10 px-4 py-2.5 text-sm font-semibold text-yellow-300 transition-all duration-300 hover:bg-yellow-500 hover:text-slate-900"
             >
               <Printer size={16} />
-              PDF Olarak Yazdır / İndir
+              {content.printLabel}
             </button>
             <button
               type="button"
@@ -140,7 +121,7 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-slate-800/80 px-4 py-2.5 text-sm text-gray-200 transition-all duration-300 hover:border-yellow-500/30 hover:text-yellow-300"
             >
               <X size={16} />
-              Kapat
+              {content.closeLabel}
             </button>
           </div>
         </div>
@@ -150,7 +131,6 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
           className="cv-layout overflow-hidden rounded-2xl border border-yellow-500/25 shadow-2xl shadow-black/40 print:rounded-none print:border-0 print:shadow-none"
         >
           <div className="flex flex-col md:flex-row">
-            {/* Sol sidebar */}
             <aside className="cv-sidebar w-full bg-slate-950 p-6 md:w-[34%] md:p-8 print:bg-slate-900">
               <div className="flex justify-center">
                 {profileImage ? (
@@ -167,7 +147,7 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
               </div>
 
               <section className="mt-8">
-                <SidebarHeading icon={Mail} title="İletişim" />
+                <SidebarHeading icon={Mail} title={content.sections.contact} />
                 <ul className="mt-4 space-y-3">
                   {contactItems.map(({ icon: Icon, label, href }) => (
                     <li key={label} className="flex items-start gap-3 text-sm">
@@ -190,18 +170,18 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
               </section>
 
               <section className="mt-8">
-                <SidebarHeading icon={Code2} title="Programlama Dilleri" />
+                <SidebarHeading icon={Code2} title={content.sections.programming} />
                 <div className="mt-4 space-y-4">
-                  {PROGRAMMING_SKILLS.map((skill) => (
+                  {content.programmingSkills.map((skill) => (
                     <SkillBar key={skill.name} {...skill} />
                   ))}
                 </div>
               </section>
 
               <section className="mt-8">
-                <SidebarHeading icon={Wrench} title="Araçlar & Teknolojiler" />
+                <SidebarHeading icon={Wrench} title={content.sections.tools} />
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {TOOLS.map((tool) => (
+                  {CV_TOOLS.map((tool) => (
                     <span
                       key={tool}
                       className="rounded-md border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-xs text-gray-200"
@@ -213,16 +193,15 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
               </section>
 
               <section className="mt-8">
-                <SidebarHeading icon={Globe} title="Diller" />
+                <SidebarHeading icon={Globe} title={content.sections.languages} />
                 <div className="mt-4 space-y-4">
-                  {LANGUAGE_SKILLS.map((skill) => (
+                  {content.languageSkills.map((skill) => (
                     <SkillBar key={skill.name} {...skill} />
                   ))}
                 </div>
               </section>
             </aside>
 
-            {/* Sağ ana içerik */}
             <main className="cv-main flex-1 bg-slate-100 p-6 text-slate-800 md:p-10 print:bg-white print:text-gray-900">
               <header className="mb-8 border-b border-yellow-500/30 pb-6">
                 <h2
@@ -232,48 +211,41 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
                   {displayName}
                 </h2>
                 <p className="mt-2 text-lg font-medium text-yellow-700 print:text-yellow-800">
-                  {displayTitle}
+                  {content.title}
                 </p>
                 <div className="mt-4 h-1 w-16 rounded-full bg-gradient-to-r from-yellow-600 to-yellow-400" />
               </header>
 
               <section className="mb-8">
-                <MainHeading icon={User} title="Hakkımda" />
+                <MainHeading icon={User} title={content.sections.about} />
                 <p className="text-sm leading-relaxed text-slate-700 sm:text-base print:text-[13px] print:leading-relaxed">
-                  Yakın Doğu Üniversitesi&apos;nde %100 İngilizce Yazılım Mühendisliği eğitiminde
-                  2. sınıfı başarıyla tamamlamış bir öğrenciyim. Python ve JavaScript ile algoritma,
-                  veri analizi ve modern web arayüzleri geliştirme alanlarında proje deneyimim
-                  bulunmaktadır. Öğrenmeye açık, takım çalışmasına yatkın ve problem çözme odaklı
-                  bir geliştirici olmayı hedefliyorum.
+                  {content.aboutText}
                 </p>
               </section>
 
               <section className="mb-8">
-                <MainHeading icon={GraduationCap} title="Eğitim" />
+                <MainHeading icon={GraduationCap} title={content.sections.education} />
                 <div className="relative pl-5">
                   <span className="absolute left-0 top-2 h-2 w-2 rounded-full bg-yellow-500" />
                   <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <p className="font-semibold text-slate-900">
-                        Yakın Doğu Üniversitesi (Near East University)
+                        {content.education.university}
                       </p>
-                      <p className="text-sm text-slate-600">
-                        Yazılım Mühendisliği (İngilizce)
-                      </p>
+                      <p className="text-sm text-slate-600">{content.education.degree}</p>
                     </div>
-                    <p className="text-sm font-medium text-slate-500">2024 — Devam</p>
+                    <p className="text-sm font-medium text-slate-500">
+                      {content.education.period}
+                    </p>
                   </div>
-                  <p className="mt-2 text-sm text-slate-600">2. sınıf başarıyla tamamlandı.</p>
+                  <p className="mt-2 text-sm text-slate-600">{content.education.detail}</p>
                 </div>
               </section>
 
               <section>
-                <MainHeading icon={Star} title="Hedef" />
+                <MainHeading icon={Star} title={content.sections.goal} />
                 <p className="text-sm leading-relaxed text-slate-700 sm:text-base print:text-[13px] print:leading-relaxed">
-                  Yazılım mühendisliği alanında staj ve proje deneyimi kazanarak teorik bilgimi
-                  pratiğe dönüştürmeyi amaçlıyorum. Kurumsal veya girişim ortamında modern
-                  teknolojilerle sürdürülebilir, kullanıcı odaklı yazılım çözümleri geliştirmek
-                  istiyorum.
+                  {content.goalText}
                 </p>
               </section>
             </main>
