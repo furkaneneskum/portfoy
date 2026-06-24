@@ -5,31 +5,54 @@ export function normalizeExternalUrl(url) {
   return `https://${value}`;
 }
 
+function toProjectsPath(filename) {
+  return `/projects/${filename.replace(/^\/+/, "").replace(/^projects\//i, "")}`;
+}
+
 export function normalizeImageUrl(url) {
   const value = (url || "").trim();
   if (!value) return "";
 
   const normalized = value.replace(/\\/g, "/");
 
-  // Windows / tam yol: .../public/projects/dosya.jpg -> /projects/dosya.jpg
   const fromPublicFolder = normalized.match(/(?:^|\/)public\/projects\/(.+)$/i);
   if (fromPublicFolder) {
-    return `/projects/${fromPublicFolder[1]}`;
+    return toProjectsPath(fromPublicFolder[1]);
   }
 
-  // Yanlis yol: /portfoy/public/projects/dosya.jpg -> /projects/dosya.jpg
   const projectsSegment = normalized.match(/\/projects\/(.+)$/i);
   if (projectsSegment && !normalized.startsWith("/projects/")) {
-    return `/projects/${projectsSegment[1]}`;
+    return toProjectsPath(projectsSegment[1]);
   }
 
-  if (
-    normalized.startsWith("/") ||
-    /^https?:\/\//i.test(normalized) ||
-    normalized.startsWith("data:")
-  ) {
+  if (/^https?:\/\//i.test(normalized) || normalized.startsWith("data:")) {
     return normalized;
   }
 
-  return `/projects/${normalized.replace(/^\/+/, "")}`;
+  if (normalized.startsWith("/projects/")) {
+    return normalized;
+  }
+
+  if (normalized.startsWith("/")) {
+    const fileName = normalized.split("/").pop();
+    return fileName ? toProjectsPath(fileName) : "";
+  }
+
+  return toProjectsPath(normalized);
+}
+
+export function resolveImageUrl(url) {
+  const normalized = normalizeImageUrl(url);
+  if (!normalized) return "";
+  if (/^https?:\/\//i.test(normalized) || normalized.startsWith("data:")) {
+    return normalized;
+  }
+
+  const base = import.meta.env.BASE_URL || "/";
+  if (normalized.startsWith(base)) {
+    return normalized;
+  }
+
+  const path = normalized.startsWith("/") ? normalized.slice(1) : normalized;
+  return `${base}${path}`;
 }

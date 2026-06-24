@@ -45,7 +45,7 @@ import {
   testFirestoreWrite,
   updateProject,
 } from "./firebase/portfolioService";
-import { normalizeExternalUrl, normalizeImageUrl } from "./utils/url";
+import { normalizeExternalUrl, normalizeImageUrl, resolveImageUrl } from "./utils/url";
 
 const SECRET_ADMIN_CODE = "furkanadmin";
 
@@ -692,7 +692,7 @@ export default function App() {
                     <div className="flex gap-4">
                       {project.imageUrl ? (
                         <img
-                          src={project.imageUrl}
+                          src={resolveImageUrl(project.imageUrl)}
                           alt={project.title}
                           className="h-20 w-20 rounded-lg object-cover"
                         />
@@ -917,7 +917,7 @@ export default function App() {
                   <p className="mb-3 text-sm text-gray-300">Profil Fotografi (Hero)</p>
                   {profileDraft.profileImageUrl ? (
                     <img
-                      src={profileDraft.profileImageUrl}
+                      src={resolveImageUrl(profileDraft.profileImageUrl)}
                       alt="Profil"
                       className="mb-4 h-40 w-40 rounded-full object-cover"
                     />
@@ -943,7 +943,7 @@ export default function App() {
                   <p className="mb-3 text-sm text-gray-300">Hakkimda Fotografi</p>
                   {profileDraft.aboutImageUrl ? (
                     <img
-                      src={profileDraft.aboutImageUrl}
+                      src={resolveImageUrl(profileDraft.aboutImageUrl)}
                       alt="Hakkimda"
                       className="mb-4 h-40 w-full rounded-xl object-cover"
                     />
@@ -1183,7 +1183,7 @@ export default function App() {
         >
           {profile.profileImageUrl && (
             <img
-              src={profile.profileImageUrl}
+              src={resolveImageUrl(profile.profileImageUrl)}
               alt={profile.name}
               className="mb-8 h-44 w-44 rounded-full border-2 border-yellow-500/40 object-cover object-center shadow-lg shadow-yellow-500/20 sm:h-52 sm:w-52 md:h-60 md:w-60"
             />
@@ -1225,7 +1225,7 @@ export default function App() {
             <div className="relative overflow-hidden rounded-2xl border border-yellow-500/20 bg-slate-800/45 p-2 shadow-2xl backdrop-blur-lg">
               {profile.aboutImageUrl ? (
                 <img
-                  src={profile.aboutImageUrl}
+                  src={resolveImageUrl(profile.aboutImageUrl)}
                   alt="Hakkimda"
                   className="h-[280px] w-full rounded-xl object-cover"
                 />
@@ -1285,7 +1285,7 @@ export default function App() {
               >
                 {project.imageUrl ? (
                   <img
-                    src={project.imageUrl}
+                    src={resolveImageUrl(project.imageUrl)}
                     alt={project.title}
                     className="h-44 w-full object-cover"
                     onError={(event) => {
