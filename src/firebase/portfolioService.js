@@ -16,7 +16,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { db, storage, auth, resetFirestoreConnection } from "./config";
+import { db, storage, auth, resetFirestoreConnection, firebaseApiKey, firebaseProjectId } from "./config";
 import { normalizeExternalUrl, normalizeImageUrl } from "../utils/url";
 
 export const DEFAULT_PROFILE = {
@@ -342,13 +342,46 @@ export async function updateSkills(categories) {
   await setDoc(skillsRef(), { categories }, { merge: true });
 }
 
+async function addMessageViaRest(payload) {
+  if (!firebaseApiKey || !firebaseProjectId) {
+    const error = new Error("Firebase REST yapilandirmasi eksik.");
+    error.code = "firebase/not-configured";
+    throw error;
+  }
+
+  const url =
+    `https://firestore.googleapis.com/v1/projects/${firebaseProjectId}` +
+    `/databases/(default)/documents/messages?key=${firebaseApiKey}`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fields: {
+        name: { stringValue: payload.name },
+        email: { stringValue: payload.email },
+        message: { stringValue: payload.message },
+        read: { booleanValue: false },
+        createdAt: { timestampValue: new Date().toISOString() },
+      },
+    }),
+  });
+
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(body?.error?.message || "REST mesaj gonderilemedi.");
+    error.code = response.status === 403 ? "permission-denied" : "rest-failed";
+    throw error;
+  }
+
+  return body;
+}
+
 export async function addMessage(message) {
   const payload = {
     name: (message.name || "").trim(),
     email: (message.email || "").trim(),
     message: (message.message || "").trim(),
-    read: false,
-    createdAt: serverTimestamp(),
   };
 
   if (!payload.name || !payload.email || !payload.message) {
@@ -357,7 +390,20 @@ export async function addMessage(message) {
     throw error;
   }
 
-  return withFirestoreRetry(() => addDoc(messagesCol(), payload));
+  try {
+    return await withFirestoreRetry(() =>
+      addDoc(messagesCol(), {
+        ...payload,
+        read: false,
+        createdAt: serverTimestamp(),
+      })
+    );
+  } catch (error) {
+    if (error.code === "permission-denied" || error.code === "unauthenticated") {
+      return addMessageViaRest(payload);
+    }
+    throw error;
+  }
 }
 
 export async function markMessageAsRead(id) {
