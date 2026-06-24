@@ -17,3 +17,41 @@ body {
   margin: 0;
   font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #cv-print-area,
+  #cv-print-area * {
+    visibility: visible;
+  }
+
+  #cv-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: #ffffff !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

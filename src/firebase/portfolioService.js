@@ -360,6 +360,9 @@ async function addMessageViaRest(payload) {
       fields: {
         name: { stringValue: payload.name },
         email: { stringValue: payload.email },
+        ...(payload.subject
+          ? { subject: { stringValue: payload.subject } }
+          : {}),
         message: { stringValue: payload.message },
         read: { booleanValue: false },
         createdAt: { timestampValue: new Date().toISOString() },
@@ -381,6 +384,7 @@ export async function addMessage(message) {
   const payload = {
     name: (message.name || "").trim(),
     email: (message.email || "").trim(),
+    subject: (message.subject || "").trim(),
     message: (message.message || "").trim(),
   };
 
@@ -390,14 +394,20 @@ export async function addMessage(message) {
     throw error;
   }
 
+  const docData = {
+    name: payload.name,
+    email: payload.email,
+    message: payload.message,
+    read: false,
+    createdAt: serverTimestamp(),
+  };
+
+  if (payload.subject) {
+    docData.subject = payload.subject;
+  }
+
   try {
-    return await withFirestoreRetry(() =>
-      addDoc(messagesCol(), {
-        ...payload,
-        read: false,
-        createdAt: serverTimestamp(),
-      })
-    );
+    return await withFirestoreRetry(() => addDoc(messagesCol(), docData));
   } catch (error) {
     if (error.code === "permission-denied" || error.code === "unauthenticated") {
       return addMessageViaRest(payload);

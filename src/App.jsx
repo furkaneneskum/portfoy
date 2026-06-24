@@ -26,7 +26,10 @@ import {
   Upload,
   Image as ImageIcon,
   Loader2,
+  FileText,
 } from "lucide-react";
+import DigitalCv from "./components/DigitalCv";
+import ContactSection from "./components/ContactSection";
 import { auth, isFirebaseConfigured, firebaseProjectId, checkFirestoreHealth } from "./firebase/config";
 import {
   DEFAULT_PROFILE,
@@ -84,13 +87,28 @@ export default function App() {
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
+    subject: "",
     message: "",
   });
   const [contactStatus, setContactStatus] = useState({ type: "", text: "" });
   const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [cvOpen, setCvOpen] = useState(false);
   const [adminNotice, setAdminNotice] = useState("");
   const [profileDraft, setProfileDraft] = useState(DEFAULT_PROFILE);
   const secretCodeBufferRef = useRef("");
+
+  useEffect(() => {
+    if (!cvOpen) return undefined;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setCvOpen(false);
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [cvOpen]);
 
   useEffect(() => {
     if (!isFirebaseConfigured()) {
@@ -420,10 +438,11 @@ export default function App() {
 
     const name = contactForm.name.trim();
     const email = contactForm.email.trim();
+    const subject = contactForm.subject.trim();
     const message = contactForm.message.trim();
 
     if (!name || !email || !message) {
-      setContactStatus({ type: "error", text: "Lutfen tum alanlari doldur." });
+      setContactStatus({ type: "error", text: "Lutfen tum zorunlu alanlari doldur." });
       return;
     }
 
@@ -444,7 +463,7 @@ export default function App() {
     setContactStatus({ type: "", text: "" });
 
     const submitWithTimeout = Promise.race([
-      addMessage({ name, email, message }),
+      addMessage({ name, email, subject, message }),
       new Promise((_, reject) => {
         setTimeout(() => {
           const error = new Error("Baglanti zaman asimina ugradi.");
@@ -456,7 +475,7 @@ export default function App() {
 
     try {
       await submitWithTimeout;
-      setContactForm({ name: "", email: "", message: "" });
+      setContactForm({ name: "", email: "", subject: "", message: "" });
       setContactStatus({ type: "success", text: "Mesajin basariyla gonderildi." });
       setTimeout(() => setContactStatus({ type: "", text: "" }), 4000);
     } catch (error) {
@@ -1010,6 +1029,11 @@ export default function App() {
                         <p className="text-xs text-gray-400">
                           {item.email} - {item.createdAt}
                         </p>
+                        {item.subject && (
+                          <p className="mt-1 text-xs font-medium text-yellow-300/90">
+                            Konu: {item.subject}
+                          </p>
+                        )}
                       </div>
                       <div className="flex gap-2">
                         {!item.read && (
@@ -1292,15 +1316,26 @@ export default function App() {
               ["Hakkimda", "#hakkimda"],
               ["Yetenekler", "#yetenekler"],
               ["Projeler", "#projeler"],
+              ["CV", "#cv"],
               ["Iletisim", "#iletisim"],
             ].map(([label, href]) => (
               <li key={href}>
-                <a
-                  href={href}
-                  className="rounded-md px-2 py-1 text-gray-300 transition-all duration-300 hover:text-yellow-400"
-                >
-                  {label}
-                </a>
+                {href === "#cv" ? (
+                  <button
+                    type="button"
+                    onClick={() => setCvOpen(true)}
+                    className="rounded-md px-2 py-1 text-gray-300 transition-all duration-300 hover:text-yellow-400"
+                  >
+                    {label}
+                  </button>
+                ) : (
+                  <a
+                    href={href}
+                    className="rounded-md px-2 py-1 text-gray-300 transition-all duration-300 hover:text-yellow-400"
+                  >
+                    {label}
+                  </a>
+                )}
               </li>
             ))}
           </ul>
@@ -1333,7 +1368,7 @@ export default function App() {
             {profile.slogan}
           </p>
 
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-col flex-wrap items-center justify-center gap-4 sm:flex-row">
             <a
               href="#projeler"
               className="group inline-flex items-center justify-center gap-2 rounded-xl border border-yellow-400/40 bg-gradient-to-r from-yellow-500 to-amber-400 px-6 py-3 font-semibold text-slate-900 shadow-[0_0_0px_rgba(250,204,21,0.0)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(250,204,21,0.35)]"
@@ -1341,6 +1376,14 @@ export default function App() {
               Projelerimi Gor
               <ArrowRight size={17} className="transition-transform duration-300 group-hover:translate-x-1" />
             </a>
+            <button
+              type="button"
+              onClick={() => setCvOpen(true)}
+              className="group inline-flex items-center justify-center gap-2 rounded-xl border border-yellow-500/50 bg-transparent px-6 py-3 font-semibold text-yellow-400 transition-all duration-300 hover:scale-[1.03] hover:border-yellow-400 hover:bg-yellow-500/10 hover:shadow-[0_0_24px_rgba(250,204,21,0.2)]"
+            >
+              <FileText size={17} />
+              CV Goruntule / Indir
+            </button>
             <a
               href="#iletisim"
               className="group inline-flex items-center justify-center gap-2 rounded-xl border border-yellow-500/40 bg-slate-800/70 px-6 py-3 font-semibold text-yellow-400 backdrop-blur-md transition-all duration-300 hover:scale-[1.03] hover:bg-slate-700/70 hover:shadow-[0_0_24px_rgba(250,204,21,0.25)]"
@@ -1466,80 +1509,17 @@ export default function App() {
           )}
         </section>
 
-        <section id="iletisim" className="py-20">
-          <div className="mx-auto max-w-3xl rounded-2xl border border-yellow-500/25 bg-slate-800/50 p-6 shadow-xl shadow-black/30 backdrop-blur-lg sm:p-8">
-            <h3 className="text-3xl font-semibold text-yellow-400">Iletisim</h3>
-            <p className="mt-3 text-gray-300">
-              Staj, is birligi veya proje gorusmeleri icin formu doldurup bana ulasabilirsin.
-            </p>
-
-            <form onSubmit={handleContactSubmit} className="mt-8 grid gap-4 sm:grid-cols-2">
-              <label className="sm:col-span-1">
-                <span className="mb-2 block text-sm text-gray-300">Ad Soyad</span>
-                <input
-                  type="text"
-                  name="name"
-                  autoComplete="name"
-                  placeholder="Adiniz Soyadiniz"
-                  value={contactForm.name}
-                  onChange={(event) =>
-                    setContactForm((prev) => ({ ...prev, name: event.target.value }))
-                  }
-                  className="w-full rounded-lg border border-yellow-500/30 bg-slate-900/70 px-4 py-3 text-base text-gray-100 outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/20"
-                />
-              </label>
-              <label className="sm:col-span-1">
-                <span className="mb-2 block text-sm text-gray-300">E-posta</span>
-                <input
-                  type="email"
-                  name="email"
-                  autoComplete="email"
-                  inputMode="email"
-                  placeholder="ornek@mail.com"
-                  value={contactForm.email}
-                  onChange={(event) =>
-                    setContactForm((prev) => ({ ...prev, email: event.target.value }))
-                  }
-                  className="w-full rounded-lg border border-yellow-500/30 bg-slate-900/70 px-4 py-3 text-base text-gray-100 outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/20"
-                />
-              </label>
-              <label className="sm:col-span-2">
-                <span className="mb-2 block text-sm text-gray-300">Mesaj</span>
-                <textarea
-                  rows={5}
-                  name="message"
-                  autoComplete="off"
-                  placeholder="Mesajinizi yazin..."
-                  value={contactForm.message}
-                  onChange={(event) =>
-                    setContactForm((prev) => ({ ...prev, message: event.target.value }))
-                  }
-                  className="w-full resize-none rounded-lg border border-yellow-500/30 bg-slate-900/70 px-4 py-3 text-base text-gray-100 outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/20"
-                />
-              </label>
-              <div className="sm:col-span-2">
-                <button
-                  type="submit"
-                  disabled={contactSubmitting}
-                  className="inline-flex items-center gap-2 rounded-xl border border-yellow-400/40 bg-gradient-to-r from-yellow-500 to-amber-400 px-6 py-3 font-semibold text-slate-900 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(250,204,21,0.35)] disabled:opacity-60"
-                >
-                  {contactSubmitting ? "Gonderiliyor..." : "Mesaj Gonder"}
-                  <ArrowRight size={16} />
-                </button>
-                {contactStatus.text && (
-                  <p
-                    className={`mt-3 text-sm ${
-                      contactStatus.type === "error" ? "text-red-300" : "text-green-300"
-                    }`}
-                  >
-                    {contactStatus.text}
-                  </p>
-                )}
-              </div>
-            </form>
-          </div>
-        </section>
+        <ContactSection
+          profile={profile}
+          contactForm={contactForm}
+          setContactForm={setContactForm}
+          onSubmit={handleContactSubmit}
+          contactSubmitting={contactSubmitting}
+          contactStatus={contactStatus}
+        />
       </main>
+
+      <DigitalCv isOpen={cvOpen} onClose={() => setCvOpen(false)} profile={profile} />
 
       <footer
         id="footer"
