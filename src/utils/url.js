@@ -15,6 +15,10 @@ export function normalizeImageUrl(url) {
 
   const normalized = value.replace(/\\/g, "/");
 
+  if (/^https?:\/\//i.test(normalized) || normalized.startsWith("data:")) {
+    return normalized;
+  }
+
   const fromPublicFolder = normalized.match(/(?:^|\/)public\/projects\/(.+)$/i);
   if (fromPublicFolder) {
     return toProjectsPath(fromPublicFolder[1]);
@@ -23,10 +27,6 @@ export function normalizeImageUrl(url) {
   const projectsSegment = normalized.match(/\/projects\/(.+)$/i);
   if (projectsSegment && !normalized.startsWith("/projects/")) {
     return toProjectsPath(projectsSegment[1]);
-  }
-
-  if (/^https?:\/\//i.test(normalized) || normalized.startsWith("data:")) {
-    return normalized;
   }
 
   if (normalized.startsWith("/projects/")) {
@@ -41,18 +41,48 @@ export function normalizeImageUrl(url) {
   return toProjectsPath(normalized);
 }
 
+function getAppBasePath() {
+  const viteBase = import.meta.env.BASE_URL;
+  if (viteBase && viteBase !== "/") {
+    return viteBase.endsWith("/") ? viteBase : `${viteBase}/`;
+  }
+
+  if (typeof window !== "undefined") {
+    const match = window.location.pathname.match(/^(\/[^/]+)\//);
+    if (match?.[1] && match[1] !== "/assets") {
+      return `${match[1]}/`;
+    }
+  }
+
+  return "/";
+}
+
+function joinUrl(origin, basePath, relativePath) {
+  const base = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+  const path = relativePath.startsWith("/") ? relativePath : `/${relativePath}`;
+  return `${origin}${base}${path}`;
+}
+
 export function resolveImageUrl(url) {
   const normalized = normalizeImageUrl(url);
   if (!normalized) return "";
+
   if (/^https?:\/\//i.test(normalized) || normalized.startsWith("data:")) {
     return normalized;
   }
 
-  const base = import.meta.env.BASE_URL || "/";
-  if (normalized.startsWith(base)) {
-    return normalized;
+  const basePath = getAppBasePath();
+  const relativePath = normalized.startsWith("/") ? normalized : `/${normalized}`;
+
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return joinUrl(window.location.origin, basePath, relativePath);
   }
 
-  const path = normalized.startsWith("/") ? normalized.slice(1) : normalized;
-  return `${base}${path}`;
+  const siteUrl = (import.meta.env.VITE_SITE_URL || "").replace(/\/$/, "");
+  if (siteUrl) {
+    return `${siteUrl}${relativePath}`;
+  }
+
+  const path = relativePath.startsWith("/") ? relativePath.slice(1) : relativePath;
+  return `${basePath}${path}`;
 }
