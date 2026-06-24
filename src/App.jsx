@@ -76,6 +76,7 @@ export default function App() {
     imageUrl: "",
   });
   const [projectImageFile, setProjectImageFile] = useState(null);
+  const [projectEdits, setProjectEdits] = useState({});
   const [skillForm, setSkillForm] = useState({
     category: "Ana Diller",
     value: "",
@@ -144,6 +145,32 @@ export default function App() {
         });
     }
   }, [isAdminRoute, dataLoading]);
+
+  useEffect(() => {
+    setProjectEdits((prev) => {
+      const next = { ...prev };
+      let changed = false;
+
+      projects.forEach((project) => {
+        if (next[project.id]) return;
+
+        next[project.id] = {
+          imageUrl: project.imageUrl || "",
+          link: project.link && project.link !== "#" ? project.link : "",
+        };
+        changed = true;
+      });
+
+      Object.keys(next).forEach((id) => {
+        if (!projects.some((project) => project.id === id)) {
+          delete next[id];
+          changed = true;
+        }
+      });
+
+      return changed ? next : prev;
+    });
+  }, [projects]);
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -291,6 +318,49 @@ export default function App() {
       setAdminNotice(
         `Proje eklenemedi: ${error.code || "bilinmeyen-hata"} - ${error.message}`
       );
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleSaveProjectImageUrl = async (projectId) => {
+    const draft = projectEdits[projectId];
+    if (!draft) return;
+
+    const imageUrl = normalizeImageUrl(draft.imageUrl);
+    setActionLoading(true);
+    setAdminNotice("");
+    try {
+      await updateProject(projectId, { imageUrl });
+      setProjectEdits((prev) => ({
+        ...prev,
+        [projectId]: { ...prev[projectId], imageUrl },
+      }));
+      setAdminNotice("Proje fotograf URL kaydedildi.");
+    } catch (error) {
+      setAdminNotice(
+        `Fotograf URL kaydedilemedi: ${error.code || "hata"} - ${error.message}`
+      );
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleSaveProjectLink = async (projectId) => {
+    const draft = projectEdits[projectId];
+    if (!draft) return;
+
+    setActionLoading(true);
+    setAdminNotice("");
+    try {
+      await updateProject(projectId, { link: draft.link });
+      setProjectEdits((prev) => ({
+        ...prev,
+        [projectId]: { ...prev[projectId], link: draft.link },
+      }));
+      setAdminNotice("Proje linki kaydedildi.");
+    } catch (error) {
+      setAdminNotice(`Link kaydedilemedi: ${error.code || "hata"} - ${error.message}`);
     } finally {
       setActionLoading(false);
     }
@@ -690,9 +760,11 @@ export default function App() {
                     className="flex flex-col gap-3 rounded-xl border border-yellow-500/20 bg-slate-900/60 p-4 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="flex gap-4">
-                      {project.imageUrl ? (
+                      {projectEdits[project.id]?.imageUrl || project.imageUrl ? (
                         <img
-                          src={resolveImageUrl(project.imageUrl)}
+                          src={resolveImageUrl(
+                            projectEdits[project.id]?.imageUrl || project.imageUrl
+                          )}
                           alt={project.title}
                           className="h-20 w-20 rounded-lg object-cover"
                         />
@@ -711,75 +783,88 @@ export default function App() {
                             Fotograf URL yok - asagiya URL yapistir
                           </p>
                         )}
-                        <input
-                          defaultValue={project.imageUrl || ""}
-                          placeholder="Fotograf URL (/projects/proje1.jpg)"
-                          className={`mt-2 ${inputClass}`}
-                          onBlur={async (event) => {
-                            const imageUrl = normalizeImageUrl(event.target.value);
-                            event.target.value = imageUrl;
-                            try {
-                              await updateProject(project.id, {
-                                imageUrl,
-                              });
-                              const latest = await fetchProjects();
-                              setProjects(latest);
-                              setAdminNotice("Proje fotograf URL guncellendi.");
-                            } catch (error) {
-                              setAdminNotice(
-                                `Fotograf URL kaydedilemedi: ${error.code || "hata"} - ${error.message}`
-                              );
+                        <div className="mt-2 flex gap-2">
+                          <input
+                            value={projectEdits[project.id]?.imageUrl ?? ""}
+                            onChange={(event) =>
+                              setProjectEdits((prev) => ({
+                                ...prev,
+                                [project.id]: {
+                                  ...prev[project.id],
+                                  imageUrl: event.target.value,
+                                },
+                              }))
                             }
-                          }}
-                        />
+                            placeholder="Fotograf URL (/projects/proje1.jpg)"
+                            className={`flex-1 ${inputClass}`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleSaveProjectImageUrl(project.id)}
+                            disabled={actionLoading}
+                            className="shrink-0 rounded-lg border border-yellow-500/40 px-3 py-2 text-xs font-medium text-yellow-300 transition-all duration-300 hover:bg-yellow-500 hover:text-slate-900 disabled:opacity-60"
+                          >
+                            URL Kaydet
+                          </button>
+                        </div>
                         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                           <input
-                            defaultValue={project.link && project.link !== "#" ? project.link : ""}
+                            value={projectEdits[project.id]?.link ?? ""}
+                            onChange={(event) =>
+                              setProjectEdits((prev) => ({
+                                ...prev,
+                                [project.id]: {
+                                  ...prev[project.id],
+                                  link: event.target.value,
+                                },
+                              }))
+                            }
                             placeholder="https://github.com/kullanici/proje"
                             className={`flex-1 ${inputClass}`}
-                            onBlur={async (event) => {
-                              try {
-                                await updateProject(project.id, {
-                                  link: event.target.value,
-                                });
-                                const latest = await fetchProjects();
-                                setProjects(latest);
-                                setAdminNotice("Proje linki guncellendi.");
-                              } catch (error) {
-                                setAdminNotice(
-                                  `Link guncellenemedi: ${error.code || "hata"} - ${error.message}`
-                                );
-                              }
-                            }}
                           />
+                          <button
+                            type="button"
+                            onClick={() => handleSaveProjectLink(project.id)}
+                            disabled={actionLoading}
+                            className="shrink-0 rounded-lg border border-yellow-500/40 px-3 py-2 text-xs font-medium text-yellow-300 transition-all duration-300 hover:bg-yellow-500 hover:text-slate-900 disabled:opacity-60"
+                          >
+                            Link Kaydet
+                          </button>
                         </div>
-                        <label className="mt-2 inline-flex cursor-pointer items-center gap-2 text-xs text-yellow-300">
-                          <Upload size={12} />
-                          Fotograf guncelle
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={async (event) => {
-                              const file = event.target.files?.[0];
-                              if (!file) return;
-                              setActionLoading(true);
-                              try {
-                                await uploadProjectImage(project.id, file);
-                                const latest = await fetchProjects();
-                                setProjects(latest);
-                                setAdminNotice("Proje fotografi guncellendi.");
-                              } catch (error) {
-                                setAdminNotice(
-                                  `Fotograf yuklenemedi: ${error.code || "hata"} - ${error.message}. Storage Rules kontrol et.`
-                                );
-                              } finally {
-                                setActionLoading(false);
-                                event.target.value = "";
-                              }
-                            }}
-                          />
-                        </label>
+                        <details className="mt-2 rounded-lg border border-yellow-500/20 bg-slate-900/40 p-2 text-xs text-gray-400">
+                          <summary className="cursor-pointer text-yellow-300">
+                            Dosyadan yukle (Blaze plan gerekir)
+                          </summary>
+                          <label className="mt-2 inline-flex cursor-pointer items-center gap-2 text-yellow-300">
+                            <Upload size={12} />
+                            Dosya sec
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={async (event) => {
+                                const file = event.target.files?.[0];
+                                if (!file) return;
+                                setActionLoading(true);
+                                try {
+                                  const imageUrl = await uploadProjectImage(project.id, file);
+                                  setProjectEdits((prev) => ({
+                                    ...prev,
+                                    [project.id]: { ...prev[project.id], imageUrl },
+                                  }));
+                                  setAdminNotice("Proje fotografi Storage'a yuklendi.");
+                                } catch (error) {
+                                  setAdminNotice(
+                                    `Fotograf yuklenemedi: ${error.code || "hata"} - ${error.message}. URL yontemini kullan.`
+                                  );
+                                } finally {
+                                  setActionLoading(false);
+                                  event.target.value = "";
+                                }
+                              }}
+                            />
+                          </label>
+                        </details>
                       </div>
                     </div>
                     <button
