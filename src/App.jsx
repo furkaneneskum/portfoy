@@ -262,6 +262,7 @@ export default function App() {
         slogan: profileDraft.slogan,
         about: profileDraft.about,
         email: profileDraft.email,
+        phone: profileDraft.phone,
         github: profileDraft.github,
         linkedin: profileDraft.linkedin,
         profileImageUrl: normalizeImageUrl(profileDraft.profileImageUrl),
@@ -1171,6 +1172,17 @@ export default function App() {
                     onChange={(event) =>
                       setProfileDraft((prev) => ({ ...prev, email: event.target.value }))
                     }
+                    className={inputClass}
+                  />
+                </label>
+                <label>
+                  <span className="mb-2 block text-sm text-gray-300">Telefon</span>
+                  <input
+                    value={profileDraft.phone || ""}
+                    onChange={(event) =>
+                      setProfileDraft((prev) => ({ ...prev, phone: event.target.value }))
+                    }
+                    placeholder="+90 5XX XXX XX XX"
                     className={inputClass}
                   />
                 </label>

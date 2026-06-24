@@ -1,4 +1,4 @@
-import { ArrowRight, Github, Linkedin, Mail, MapPin, Send } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, MapPin, Phone, Send } from "lucide-react";
 import { normalizeExternalUrl } from "../utils/url";
 
 export default function ContactSection({
@@ -10,8 +10,10 @@ export default function ContactSection({
   contactStatus,
 }) {
   const email = profile.email || "furkan@example.com";
+  const phone = profile.phone || "";
   const github = normalizeExternalUrl(profile.github);
   const linkedin = normalizeExternalUrl(profile.linkedin);
+  const phoneHref = phone ? `tel:${phone.replace(/\s/g, "")}` : null;
 
   const inputClass =
     "w-full rounded-xl border border-white/10 bg-slate-900/50 px-4 py-3 text-base text-slate-100 outline-none backdrop-blur-md transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400/60 focus:ring-2 focus:ring-yellow-500/20";
@@ -56,6 +58,12 @@ export default function ContactSection({
               value: "Projelerimi inceleyin",
               href: github,
             },
+            {
+              icon: Phone,
+              title: "Telefon",
+              value: phone || "Numara eklenmedi",
+              href: phoneHref,
+            },
           ].map(({ icon: Icon, title, value, href }) => (
             <div
               key={title}
@@ -84,14 +92,6 @@ export default function ContactSection({
             </div>
           ))}
 
-          <div className="rounded-2xl border border-yellow-500/20 bg-gradient-to-br from-slate-800/60 to-slate-900/80 p-6 backdrop-blur-lg">
-            <p className="text-sm leading-relaxed text-gray-300">
-              <span className="font-semibold text-yellow-400">Merit Royal</span> bunyesinde
-              yazilim muhendisligi staji yaparak, konaklama sektorunun dijital donusumune katki
-              sunmayi ve operasyonel sureclerin optimizasyonu icin veri odakli cozumler gelistirmeyi
-              hedefliyorum. Kurumsal is birliginiz icin tesekkur ederim.
-            </p>
-          </div>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-slate-800/35 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-8">

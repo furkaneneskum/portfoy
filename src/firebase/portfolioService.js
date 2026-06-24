@@ -29,6 +29,7 @@ export const DEFAULT_PROFILE = {
   profileImageUrl: "",
   aboutImageUrl: "",
   email: "furkan@example.com",
+  phone: "",
   github: "#",
   linkedin: "#",
 };
