@@ -1,47 +1,115 @@
 import {
-  Briefcase,
-  Download,
+  Code2,
   Github,
+  Globe,
   GraduationCap,
   Linkedin,
   Mail,
-  MapPin,
+  Phone,
   Printer,
+  Star,
+  User,
+  Wrench,
   X,
 } from "lucide-react";
-import { normalizeExternalUrl } from "../utils/url";
+import { normalizeExternalUrl, resolveImageUrl } from "../utils/url";
 
-const CV_PROJECTS = [
-  {
-    title: "Otel Misafir Geri Bildirim Analizi",
-    description:
-      "Python tabanlı analiz aracı ile misafir yorumlarını sınıflandıran, duygu analizi yapan ve yönetime karar desteği sağlayan veri görselleştirmeleri.",
-    tech: ["Python", "Pandas", "Matplotlib"],
-  },
-  {
-    title: "Premium Restoran Rezervasyon Arayüzü",
-    description:
-      "Hızlı ve kullanıcı dostu masa rezervasyon deneyimi sunan modern arayüz.",
-    tech: ["JavaScript", "Tailwind CSS"],
-  },
+const DEFAULT_PHONE = "05428528282";
+
+const PROGRAMMING_SKILLS = [
+  { name: "Python", level: "İleri", percent: 85 },
+  { name: "JavaScript", level: "Orta-İleri", percent: 75 },
+  { name: "HTML / CSS", level: "Orta", percent: 70 },
 ];
 
-const CV_SKILLS = [
-  { label: "Diller", items: ["Python", "JavaScript"] },
-  { label: "Web", items: ["HTML5", "CSS3", "Tailwind CSS"] },
-  { label: "Araçlar", items: ["Git", "GitHub", "Veri Analizi (Pandas / Matplotlib)"] },
+const LANGUAGE_SKILLS = [
+  { name: "Türkçe", level: "Ana Dil", percent: 100 },
+  { name: "İngilizce", level: "İleri", percent: 85 },
 ];
+
+const TOOLS = [
+  "React",
+  "Vite",
+  "Tailwind CSS",
+  "Firebase",
+  "Git",
+  "GitHub",
+  "Pandas",
+  "Matplotlib",
+];
+
+function SidebarHeading({ icon: Icon, title }) {
+  return (
+    <h3 className="flex items-center gap-2 border-b border-yellow-500/20 pb-2 text-xs font-semibold tracking-[0.2em] text-yellow-400 uppercase">
+      <Icon size={14} />
+      {title}
+    </h3>
+  );
+}
+
+function SkillBar({ name, level, percent }) {
+  return (
+    <div>
+      <div className="mb-1.5 flex items-center justify-between text-sm">
+        <span className="text-gray-200">{name}</span>
+        <span className="text-xs text-yellow-400/90">{level}</span>
+      </div>
+      <div className="h-1.5 overflow-hidden rounded-full bg-slate-800">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-yellow-600 to-yellow-400"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function MainHeading({ icon: Icon, title }) {
+  return (
+    <h3 className="mb-4 flex items-center gap-2 text-sm font-bold tracking-[0.15em] text-yellow-600 uppercase print:text-yellow-700">
+      <Icon size={16} />
+      {title}
+    </h3>
+  );
+}
 
 export default function DigitalCv({ isOpen, onClose, profile }) {
   if (!isOpen) return null;
 
   const displayName = profile.name || "Furkan Enes Kum";
-  const displayTitle = profile.title || "Yazılım Mühendisliği Öğrencisi";
+  const displayTitle = "Yazılım Mühendisi (Öğrenci)";
   const email = profile.email?.trim() || "";
+  const phone = profile.phone?.trim() || DEFAULT_PHONE;
   const github = normalizeExternalUrl(profile.github);
   const linkedin = normalizeExternalUrl(profile.linkedin);
+  const profileImage = profile.profileImageUrl
+    ? resolveImageUrl(profile.profileImageUrl)
+    : null;
 
   const handlePrint = () => window.print();
+
+  const contactItems = [
+    {
+      icon: Mail,
+      label: email || "E-posta eklenmedi",
+      href: email ? `mailto:${email}` : null,
+    },
+    {
+      icon: Phone,
+      label: phone,
+      href: `tel:${phone.replace(/\s/g, "")}`,
+    },
+    {
+      icon: Linkedin,
+      label: "LinkedIn Profili",
+      href: linkedin && linkedin !== "#" ? linkedin : null,
+    },
+    {
+      icon: Github,
+      label: "GitHub Profili",
+      href: github && github !== "#" ? github : null,
+    },
+  ];
 
   return (
     <div
@@ -52,7 +120,7 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
       aria-labelledby="cv-title"
     >
       <div
-        className="relative my-4 w-full max-w-4xl"
+        className="relative my-4 w-full max-w-5xl"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 no-print">
@@ -79,159 +147,136 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
 
         <article
           id="cv-print-area"
-          className="overflow-hidden rounded-2xl border border-yellow-500/25 bg-slate-900/90 shadow-2xl shadow-black/40 backdrop-blur-lg print:rounded-none print:border-0 print:bg-white print:shadow-none"
+          className="cv-layout overflow-hidden rounded-2xl border border-yellow-500/25 shadow-2xl shadow-black/40 print:rounded-none print:border-0 print:shadow-none"
         >
-          <header className="border-b border-yellow-500/20 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-8 sm:px-10 print:border-b print:border-gray-300 print:bg-white print:from-white print:via-white print:to-white">
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="text-xs tracking-[0.2em] text-yellow-400 uppercase print:text-gray-500">
-                  Curriculum Vitae
-                </p>
+          <div className="flex flex-col md:flex-row">
+            {/* Sol sidebar */}
+            <aside className="cv-sidebar w-full bg-slate-950 p-6 md:w-[34%] md:p-8 print:bg-slate-900">
+              <div className="flex justify-center">
+                {profileImage ? (
+                  <img
+                    src={profileImage}
+                    alt={displayName}
+                    className="h-36 w-36 rounded-full border-4 border-yellow-500/40 object-cover shadow-lg shadow-yellow-500/10"
+                  />
+                ) : (
+                  <div className="flex h-36 w-36 items-center justify-center rounded-full border-4 border-yellow-500/40 bg-slate-900 text-3xl font-bold text-yellow-400">
+                    FEK
+                  </div>
+                )}
+              </div>
+
+              <section className="mt-8">
+                <SidebarHeading icon={Mail} title="İletişim" />
+                <ul className="mt-4 space-y-3">
+                  {contactItems.map(({ icon: Icon, label, href }) => (
+                    <li key={label} className="flex items-start gap-3 text-sm">
+                      <Icon className="mt-0.5 shrink-0 text-yellow-400" size={15} />
+                      {href ? (
+                        <a
+                          href={href}
+                          target={href.startsWith("http") ? "_blank" : undefined}
+                          rel={href.startsWith("http") ? "noreferrer" : undefined}
+                          className="break-all text-gray-300 transition-colors hover:text-yellow-300 print:text-gray-200 print:no-underline"
+                        >
+                          {label}
+                        </a>
+                      ) : (
+                        <span className="break-all text-gray-300">{label}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <section className="mt-8">
+                <SidebarHeading icon={Code2} title="Programlama Dilleri" />
+                <div className="mt-4 space-y-4">
+                  {PROGRAMMING_SKILLS.map((skill) => (
+                    <SkillBar key={skill.name} {...skill} />
+                  ))}
+                </div>
+              </section>
+
+              <section className="mt-8">
+                <SidebarHeading icon={Wrench} title="Araçlar & Teknolojiler" />
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {TOOLS.map((tool) => (
+                    <span
+                      key={tool}
+                      className="rounded-md border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-xs text-gray-200"
+                    >
+                      {tool}
+                    </span>
+                  ))}
+                </div>
+              </section>
+
+              <section className="mt-8">
+                <SidebarHeading icon={Globe} title="Diller" />
+                <div className="mt-4 space-y-4">
+                  {LANGUAGE_SKILLS.map((skill) => (
+                    <SkillBar key={skill.name} {...skill} />
+                  ))}
+                </div>
+              </section>
+            </aside>
+
+            {/* Sağ ana içerik */}
+            <main className="cv-main flex-1 bg-slate-100 p-6 text-slate-800 md:p-10 print:bg-white print:text-gray-900">
+              <header className="mb-8 border-b border-yellow-500/30 pb-6">
                 <h2
                   id="cv-title"
-                  className="mt-2 font-display text-3xl font-bold text-slate-100 sm:text-4xl print:text-black"
+                  className="font-display text-3xl font-bold text-slate-900 sm:text-4xl print:text-black"
                 >
                   {displayName}
                 </h2>
-                <p className="mt-2 text-lg text-yellow-300/90 print:text-gray-700">
+                <p className="mt-2 text-lg font-medium text-yellow-700 print:text-yellow-800">
                   {displayTitle}
                 </p>
-              </div>
-              <div className="hidden sm:block print:block">
-                <Download className="text-yellow-500/40 print:hidden" size={28} />
-              </div>
-            </div>
+                <div className="mt-4 h-1 w-16 rounded-full bg-gradient-to-r from-yellow-600 to-yellow-400" />
+              </header>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                { icon: Mail, label: email || "E-posta eklenmedi", href: email ? `mailto:${email}` : null },
-                { icon: MapPin, label: "Lefkoşa, KKTC", href: null },
-                {
-                  icon: Github,
-                  label: "GitHub",
-                  href: github && github !== "#" ? github : null,
-                },
-                {
-                  icon: Linkedin,
-                  label: "LinkedIn",
-                  href: linkedin && linkedin !== "#" ? linkedin : null,
-                },
-              ].map(({ icon: Icon, label, href }) => (
-                <div
-                  key={label}
-                  className="flex items-center gap-3 rounded-xl border border-yellow-500/15 bg-slate-950/40 px-4 py-3 print:border-gray-200 print:bg-white"
-                >
-                  <Icon className="shrink-0 text-yellow-400 print:text-gray-600" size={16} />
-                  {href ? (
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="truncate text-sm text-gray-300 transition-colors duration-300 hover:text-yellow-300 print:text-gray-800 print:no-underline"
-                    >
-                      {label}
-                    </a>
-                  ) : (
-                    <span className="truncate text-sm text-gray-300 print:text-gray-800">
-                      {label}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </header>
-
-          <div className="space-y-8 px-6 py-8 sm:px-10 print:space-y-6 print:px-8 print:py-6">
-            <section>
-              <h3 className="flex items-center gap-2 text-sm font-semibold tracking-[0.18em] text-yellow-400 uppercase print:text-gray-800">
-                <Briefcase size={15} />
-                Özet
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-gray-300 sm:text-base print:text-[13px] print:leading-relaxed print:text-gray-800">
-                Yakın Doğu Üniversitesi&apos;nde %100 İngilizce Yazılım Mühendisliği eğitiminde 2.
-                sınıfı başarıyla tamamlamış bir yazılım mühendisliği öğrencisiyim. Python ve
-                JavaScript dillerine odaklanarak algoritma ve modern arayüz geliştirme konularında
-                yetkinlik kazandım. Yazılım mühendisliği stajı ile operasyonel süreçlerin
-                optimizasyonu ve veri analitiği çözümlerine değer katmayı hedefliyorum.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="flex items-center gap-2 text-sm font-semibold tracking-[0.18em] text-yellow-400 uppercase print:text-gray-800">
-                <GraduationCap size={15} />
-                Eğitim
-              </h3>
-              <div className="mt-3 rounded-xl border border-yellow-500/15 bg-slate-950/30 p-4 print:border-gray-200 print:bg-white">
-                <p className="font-semibold text-slate-100 print:text-black">
-                  Yakın Doğu Üniversitesi (Near East University)
+              <section className="mb-8">
+                <MainHeading icon={User} title="Hakkımda" />
+                <p className="text-sm leading-relaxed text-slate-700 sm:text-base print:text-[13px] print:leading-relaxed">
+                  Yakın Doğu Üniversitesi&apos;nde %100 İngilizce Yazılım Mühendisliği eğitiminde
+                  2. sınıfı başarıyla tamamlamış bir öğrenciyim. Python ve JavaScript ile algoritma,
+                  veri analizi ve modern web arayüzleri geliştirme alanlarında proje deneyimim
+                  bulunmaktadır. Öğrenmeye açık, takım çalışmasına yatkın ve problem çözme odaklı
+                  bir geliştirici olmayı hedefliyorum.
                 </p>
-                <p className="mt-1 text-sm text-gray-400 print:text-gray-600">
-                  Yazılım Mühendisliği (İngilizce) · 2024 — Devam
-                </p>
-                <p className="mt-2 text-sm text-gray-300 print:text-gray-700">
-                  2. sınıf başarıyla tamamlandı.
-                </p>
-              </div>
-            </section>
+              </section>
 
-            <section>
-              <h3 className="text-sm font-semibold tracking-[0.18em] text-yellow-400 uppercase print:text-gray-800">
-                Yetenekler
-              </h3>
-              <div className="mt-3 grid gap-4 sm:grid-cols-3">
-                {CV_SKILLS.map((group) => (
-                  <div
-                    key={group.label}
-                    className="rounded-xl border border-yellow-500/15 bg-slate-950/30 p-4 print:border-gray-200 print:bg-white"
-                  >
-                    <p className="text-xs font-semibold tracking-wider text-yellow-400 uppercase print:text-gray-700">
-                      {group.label}
-                    </p>
-                    <ul className="mt-2 space-y-1">
-                      {group.items.map((item) => (
-                        <li
-                          key={item}
-                          className="text-sm text-gray-300 print:text-gray-800"
-                        >
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section>
-              <h3 className="text-sm font-semibold tracking-[0.18em] text-yellow-400 uppercase print:text-gray-800">
-                Projeler
-              </h3>
-              <div className="mt-3 space-y-4">
-                {CV_PROJECTS.map((project) => (
-                  <div
-                    key={project.title}
-                    className="rounded-xl border border-yellow-500/15 bg-slate-950/30 p-4 print:border-gray-200 print:bg-white print:break-inside-avoid"
-                  >
-                    <p className="font-semibold text-slate-100 print:text-black">
-                      {project.title}
-                    </p>
-                    <p className="mt-2 text-sm leading-relaxed text-gray-300 print:text-gray-700">
-                      {project.description}
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {project.tech.map((tech) => (
-                        <span
-                          key={tech}
-                          className="rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-xs text-yellow-300 print:border-gray-300 print:bg-gray-100 print:text-gray-800"
-                        >
-                          {tech}
-                        </span>
-                      ))}
+              <section className="mb-8">
+                <MainHeading icon={GraduationCap} title="Eğitim" />
+                <div className="relative pl-5">
+                  <span className="absolute left-0 top-2 h-2 w-2 rounded-full bg-yellow-500" />
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        Yakın Doğu Üniversitesi (Near East University)
+                      </p>
+                      <p className="text-sm text-slate-600">
+                        Yazılım Mühendisliği (İngilizce)
+                      </p>
                     </div>
+                    <p className="text-sm font-medium text-slate-500">2024 — Devam</p>
                   </div>
-                ))}
-              </div>
-            </section>
+                  <p className="mt-2 text-sm text-slate-600">2. sınıf başarıyla tamamlandı.</p>
+                </div>
+              </section>
+
+              <section>
+                <MainHeading icon={Star} title="Hedef" />
+                <p className="text-sm leading-relaxed text-slate-700 sm:text-base print:text-[13px] print:leading-relaxed">
+                  Yazılım mühendisliği alanında staj ve proje deneyimi kazanarak teorik bilgimi
+                  pratiğe dönüştürmeyi amaçlıyorum. Kurumsal veya girişim ortamında modern
+                  teknolojilerle sürdürülebilir, kullanıcı odaklı yazılım çözümleri geliştirmek
+                  istiyorum.
+                </p>
+              </section>
+            </main>
           </div>
         </article>
       </div>

@@ -29,7 +29,7 @@ export const DEFAULT_PROFILE = {
   profileImageUrl: "",
   aboutImageUrl: "",
   email: "kumfurkanenes1@gmail.com",
-  phone: "",
+  phone: "05428528282",
   github: "https://github.com/furkaneneskum",
   linkedin: "",
 };

@@ -53,9 +53,18 @@ h1,
     max-width: none;
     margin: 0;
     padding: 0;
+    box-shadow: none !important;
+  }
+
+  #cv-print-area .cv-sidebar,
+  #cv-print-area .cv-sidebar * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  #cv-print-area .cv-main {
     background: #ffffff !important;
     color: #111827 !important;
-    box-shadow: none !important;
   }
 
   .no-print {
