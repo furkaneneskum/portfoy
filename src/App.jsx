@@ -86,7 +86,8 @@ export default function App() {
     email: "",
     message: "",
   });
-  const [contactStatus, setContactStatus] = useState("");
+  const [contactStatus, setContactStatus] = useState({ type: "", text: "" });
+  const [contactSubmitting, setContactSubmitting] = useState(false);
   const [adminNotice, setAdminNotice] = useState("");
   const [profileDraft, setProfileDraft] = useState(DEFAULT_PROFILE);
   const secretCodeBufferRef = useRef("");
@@ -416,18 +417,63 @@ export default function App() {
 
   const handleContactSubmit = async (event) => {
     event.preventDefault();
-    if (!contactForm.name || !contactForm.email || !contactForm.message) return;
 
-    setActionLoading(true);
+    const name = contactForm.name.trim();
+    const email = contactForm.email.trim();
+    const message = contactForm.message.trim();
+
+    if (!name || !email || !message) {
+      setContactStatus({ type: "error", text: "Lutfen tum alanlari doldur." });
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setContactStatus({ type: "error", text: "Gecerli bir e-posta adresi yaz." });
+      return;
+    }
+
+    if (!isFirebaseConfigured()) {
+      setContactStatus({
+        type: "error",
+        text: "Mesaj servisi yapilandirilmamis. Daha sonra tekrar dene.",
+      });
+      return;
+    }
+
+    setContactSubmitting(true);
+    setContactStatus({ type: "", text: "" });
+
+    const submitWithTimeout = Promise.race([
+      addMessage({ name, email, message }),
+      new Promise((_, reject) => {
+        setTimeout(() => {
+          const error = new Error("Baglanti zaman asimina ugradi.");
+          error.code = "timeout";
+          reject(error);
+        }, 20000);
+      }),
+    ]);
+
     try {
-      await addMessage(contactForm);
+      await submitWithTimeout;
       setContactForm({ name: "", email: "", message: "" });
-      setContactStatus("Mesajin basariyla gonderildi.");
-      setTimeout(() => setContactStatus(""), 2500);
-    } catch {
-      setContactStatus("Mesaj gonderilemedi. Lutfen tekrar dene.");
+      setContactStatus({ type: "success", text: "Mesajin basariyla gonderildi." });
+      setTimeout(() => setContactStatus({ type: "", text: "" }), 4000);
+    } catch (error) {
+      console.error("Iletisim formu hatasi:", error);
+
+      let text = "Mesaj gonderilemedi. Lutfen tekrar dene.";
+      if (error.code === "permission-denied") {
+        text = "Yetki hatasi. Firestore mesaj kurallari kontrol edilmeli.";
+      } else if (error.code === "unavailable" || error.code === "timeout") {
+        text = "Baglanti sorunu. Interneti kontrol edip tekrar dene.";
+      } else if (error.code === "firebase/not-configured") {
+        text = "Site yapilandirmasi eksik. Daha sonra tekrar dene.";
+      }
+
+      setContactStatus({ type: "error", text });
     } finally {
-      setActionLoading(false);
+      setContactSubmitting(false);
     }
   };
 
@@ -1432,49 +1478,62 @@ export default function App() {
                 <span className="mb-2 block text-sm text-gray-300">Ad Soyad</span>
                 <input
                   type="text"
+                  name="name"
+                  autoComplete="name"
                   placeholder="Adiniz Soyadiniz"
                   value={contactForm.name}
                   onChange={(event) =>
                     setContactForm((prev) => ({ ...prev, name: event.target.value }))
                   }
-                  className="w-full rounded-lg border border-yellow-500/30 bg-slate-900/70 px-4 py-3 text-gray-100 outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/20"
+                  className="w-full rounded-lg border border-yellow-500/30 bg-slate-900/70 px-4 py-3 text-base text-gray-100 outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/20"
                 />
               </label>
               <label className="sm:col-span-1">
                 <span className="mb-2 block text-sm text-gray-300">E-posta</span>
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
+                  inputMode="email"
                   placeholder="ornek@mail.com"
                   value={contactForm.email}
                   onChange={(event) =>
                     setContactForm((prev) => ({ ...prev, email: event.target.value }))
                   }
-                  className="w-full rounded-lg border border-yellow-500/30 bg-slate-900/70 px-4 py-3 text-gray-100 outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/20"
+                  className="w-full rounded-lg border border-yellow-500/30 bg-slate-900/70 px-4 py-3 text-base text-gray-100 outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/20"
                 />
               </label>
               <label className="sm:col-span-2">
                 <span className="mb-2 block text-sm text-gray-300">Mesaj</span>
                 <textarea
                   rows={5}
+                  name="message"
+                  autoComplete="off"
                   placeholder="Mesajinizi yazin..."
                   value={contactForm.message}
                   onChange={(event) =>
                     setContactForm((prev) => ({ ...prev, message: event.target.value }))
                   }
-                  className="w-full resize-none rounded-lg border border-yellow-500/30 bg-slate-900/70 px-4 py-3 text-gray-100 outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/20"
+                  className="w-full resize-none rounded-lg border border-yellow-500/30 bg-slate-900/70 px-4 py-3 text-base text-gray-100 outline-none transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-500/20"
                 />
               </label>
               <div className="sm:col-span-2">
                 <button
                   type="submit"
-                  disabled={actionLoading}
+                  disabled={contactSubmitting}
                   className="inline-flex items-center gap-2 rounded-xl border border-yellow-400/40 bg-gradient-to-r from-yellow-500 to-amber-400 px-6 py-3 font-semibold text-slate-900 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(250,204,21,0.35)] disabled:opacity-60"
                 >
-                  Mesaj Gonder
+                  {contactSubmitting ? "Gonderiliyor..." : "Mesaj Gonder"}
                   <ArrowRight size={16} />
                 </button>
-                {contactStatus && (
-                  <p className="mt-3 text-sm text-green-300">{contactStatus}</p>
+                {contactStatus.text && (
+                  <p
+                    className={`mt-3 text-sm ${
+                      contactStatus.type === "error" ? "text-red-300" : "text-green-300"
+                    }`}
+                  >
+                    {contactStatus.text}
+                  </p>
                 )}
               </div>
             </form>

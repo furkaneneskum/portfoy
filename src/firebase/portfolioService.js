@@ -78,6 +78,14 @@ function requireDb() {
   return db;
 }
 
+const RETRYABLE_FIRESTORE_CODES = new Set([
+  "unavailable",
+  "deadline-exceeded",
+  "aborted",
+  "internal",
+  "resource-exhausted",
+]);
+
 async function withFirestoreRetry(operation, retries = 4) {
   let lastError;
 
@@ -86,7 +94,7 @@ async function withFirestoreRetry(operation, retries = 4) {
       return await operation();
     } catch (error) {
       lastError = error;
-      if (error.code === "unavailable" && attempt < retries - 1) {
+      if (RETRYABLE_FIRESTORE_CODES.has(error.code) && attempt < retries - 1) {
         await resetFirestoreConnection();
         await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
         continue;
@@ -335,11 +343,21 @@ export async function updateSkills(categories) {
 }
 
 export async function addMessage(message) {
-  await addDoc(messagesCol(), {
-    ...message,
+  const payload = {
+    name: (message.name || "").trim(),
+    email: (message.email || "").trim(),
+    message: (message.message || "").trim(),
     read: false,
     createdAt: serverTimestamp(),
-  });
+  };
+
+  if (!payload.name || !payload.email || !payload.message) {
+    const error = new Error("Tum alanlar zorunludur.");
+    error.code = "validation/empty-fields";
+    throw error;
+  }
+
+  return withFirestoreRetry(() => addDoc(messagesCol(), payload));
 }
 
 export async function markMessageAsRead(id) {
