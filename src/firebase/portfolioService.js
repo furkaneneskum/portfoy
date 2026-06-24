@@ -21,17 +21,17 @@ import { normalizeExternalUrl, normalizeImageUrl } from "../utils/url";
 
 export const DEFAULT_PROFILE = {
   name: "Furkan Enes Kum",
-  title: "Yakin Dogu Universitesi Yazilim Muhendisligi Ogrencisi",
+  title: "Yakın Doğu Üniversitesi Yazılım Mühendisliği Öğrencisi",
   slogan:
-    "Python ve JavaScript'in gucuyle, konaklama ve hizmet sektorunde yenilikci, veri odakli ve kusursuz dijital deneyimler gelistiriyorum.",
+    "Python ve JavaScript ile veri odaklı, kullanıcı dostu ve sürdürülebilir yazılım çözümleri geliştiriyorum.",
   about:
-    "Yakin Dogu Universitesi'nde yuzde yuz Ingilizce Yazilim Muhendisligi 2. sinifi basariyla tamamladim. Akademik egitimimi, modern teknolojiler olan Python ve JavaScript ile harmanlayarak pratik cozumlere donusturuyorum. Luks hizmet sektorunun ve ozellikle Merit Royal gibi prestijli kurumlarin, kusursuz musteri deneyimi sunmasinda yazilim mimarilerinin ve veri analizinin kritik bir role sahip olduguna inaniyorum. Amacim, yazilim yeteneklerimi kullanarak kurumsal operasyonlari optimize eden ve misafir memnuniyetini en ust duzeye cikaran projelerde yer almak.",
+    "Yakın Doğu Üniversitesi'nde %100 İngilizce Yazılım Mühendisliği eğitiminde 2. sınıfı başarıyla tamamladım. Akademik birikimimi Python ve JavaScript ile birleştirerek gerçek dünya problemlerine pratik çözümler üretiyorum. Konaklama ve hizmet sektöründe dijital dönüşümün operasyonel verimlilik ve müşteri deneyimi üzerindeki etkisine inanıyorum. Yazılım mühendisliği stajı ile öğrendiklerimi kurumsal projelere taşımayı hedefliyorum.",
   profileImageUrl: "",
   aboutImageUrl: "",
-  email: "furkan@example.com",
+  email: "kumfurkanenes1@gmail.com",
   phone: "",
-  github: "#",
-  linkedin: "#",
+  github: "https://github.com/furkaneneskum",
+  linkedin: "",
 };
 
 export const DEFAULT_SKILLS = [
@@ -41,8 +41,8 @@ export const DEFAULT_SKILLS = [
     items: ["HTML5", "CSS3", "Tailwind CSS", "Responsive Design"],
   },
   {
-    category: "Temel Muhendislik",
-    items: ["Git & GitHub", "Temel Algoritmalar", "Veri Yapilari", "Problem Cozme"],
+    category: "Temel Mühendislik",
+    items: ["Git & GitHub", "Temel Algoritmalar", "Veri Yapıları", "Problem Çözme"],
   },
 ];
 

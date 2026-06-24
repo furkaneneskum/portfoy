@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import DigitalCv from "./components/DigitalCv";
 import ContactSection from "./components/ContactSection";
+import Navbar from "./components/Navbar";
 import { auth, isFirebaseConfigured, firebaseProjectId, checkFirestoreHealth } from "./firebase/config";
 import {
   DEFAULT_PROFILE,
@@ -443,19 +444,19 @@ export default function App() {
     const message = contactForm.message.trim();
 
     if (!name || !email || !message) {
-      setContactStatus({ type: "error", text: "Lutfen tum zorunlu alanlari doldur." });
+      setContactStatus({ type: "error", text: "Lütfen tüm zorunlu alanları doldur." });
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setContactStatus({ type: "error", text: "Gecerli bir e-posta adresi yaz." });
+      setContactStatus({ type: "error", text: "Geçerli bir e-posta adresi yaz." });
       return;
     }
 
     if (!isFirebaseConfigured()) {
       setContactStatus({
         type: "error",
-        text: "Mesaj servisi yapilandirilmamis. Daha sonra tekrar dene.",
+        text: "Mesaj servisi yapılandırılmamış. Daha sonra tekrar dene.",
       });
       return;
     }
@@ -477,16 +478,16 @@ export default function App() {
     try {
       await submitWithTimeout;
       setContactForm({ name: "", email: "", subject: "", message: "" });
-      setContactStatus({ type: "success", text: "Mesajin basariyla gonderildi." });
+      setContactStatus({ type: "success", text: "Mesajın başarıyla gönderildi." });
       setTimeout(() => setContactStatus({ type: "", text: "" }), 4000);
     } catch (error) {
       console.error("Iletisim formu hatasi:", error);
 
-      let text = "Mesaj gonderilemedi. Lutfen tekrar dene.";
+      let text = "Mesaj gönderilemedi. Lütfen tekrar dene.";
       if (error.code === "permission-denied") {
-        text = "Yetki hatasi. Firestore mesaj kurallari kontrol edilmeli.";
+        text = "Yetki hatası. Firestore mesaj kuralları kontrol edilmeli.";
       } else if (error.code === "unavailable" || error.code === "timeout") {
-        text = "Baglanti sorunu. Interneti kontrol edip tekrar dene.";
+        text = "Bağlantı sorunu. İnterneti kontrol edip tekrar dene.";
       } else if (error.code === "firebase/not-configured") {
         text = "Site yapilandirmasi eksik. Daha sonra tekrar dene.";
       }
@@ -1313,46 +1314,7 @@ export default function App() {
         </div>
       )}
 
-      <header className="sticky top-0 z-50 border-b border-yellow-500/10 bg-slate-900/40 backdrop-blur-xl">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <a
-            href="#hero"
-            className="inline-flex items-center gap-2 text-sm font-semibold tracking-[0.15em] text-yellow-500 uppercase"
-          >
-            <Sparkles size={16} />
-            {profile.name}
-          </a>
-
-          <ul className="flex items-center gap-2 text-sm sm:gap-6">
-            {[
-              ["Hakkimda", "#hakkimda"],
-              ["Yetenekler", "#yetenekler"],
-              ["Projeler", "#projeler"],
-              ["CV", "#cv"],
-              ["Iletisim", "#iletisim"],
-            ].map(([label, href]) => (
-              <li key={href}>
-                {href === "#cv" ? (
-                  <button
-                    type="button"
-                    onClick={() => setCvOpen(true)}
-                    className="rounded-md px-2 py-1 text-gray-300 transition-all duration-300 hover:text-yellow-400"
-                  >
-                    {label}
-                  </button>
-                ) : (
-                  <a
-                    href={href}
-                    className="rounded-md px-2 py-1 text-gray-300 transition-all duration-300 hover:text-yellow-400"
-                  >
-                    {label}
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </header>
+      <Navbar profileName={profile.name} onOpenCv={() => setCvOpen(true)} />
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <section
@@ -1369,15 +1331,20 @@ export default function App() {
 
           <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-4 py-1 text-xs tracking-[0.18em] text-yellow-400 uppercase">
             <Sparkles size={14} />
-            Internship Portfolio
+            Staj & Portföy
           </p>
 
-          <h1 className="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
+          <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
             {profile.name}
           </h1>
-          <h2 className="mt-4 text-lg text-gray-300 sm:text-2xl">{profile.title}</h2>
+          <p className="mt-4 text-lg text-gray-300 sm:text-2xl">{profile.title}</p>
           <p className="mt-6 max-w-3xl text-base leading-relaxed text-gray-300 sm:text-lg">
             {profile.slogan}
+          </p>
+
+          <p className="mt-6 max-w-2xl rounded-xl border border-yellow-500/20 bg-slate-800/40 px-5 py-3 text-sm text-gray-300">
+            Yazılım mühendisliği stajı için başvuruda bulunuyorum. Projelerimi inceleyebilir,
+            CV&apos;mi indirebilir veya doğrudan iletişime geçebilirsiniz.
           </p>
 
           <div className="mt-10 flex flex-col flex-wrap items-center justify-center gap-4 sm:flex-row">
@@ -1385,7 +1352,7 @@ export default function App() {
               href="#projeler"
               className="group inline-flex items-center justify-center gap-2 rounded-xl border border-yellow-400/40 bg-gradient-to-r from-yellow-500 to-amber-400 px-6 py-3 font-semibold text-slate-900 shadow-[0_0_0px_rgba(250,204,21,0.0)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_30px_rgba(250,204,21,0.35)]"
             >
-              Projelerimi Gor
+              Projelerimi Gör
               <ArrowRight size={17} className="transition-transform duration-300 group-hover:translate-x-1" />
             </a>
             <button
@@ -1394,25 +1361,26 @@ export default function App() {
               className="group inline-flex items-center justify-center gap-2 rounded-xl border border-yellow-500/50 bg-transparent px-6 py-3 font-semibold text-yellow-400 transition-all duration-300 hover:scale-[1.03] hover:border-yellow-400 hover:bg-yellow-500/10 hover:shadow-[0_0_24px_rgba(250,204,21,0.2)]"
             >
               <FileText size={17} />
-              CV Goruntule / Indir
+              <span className="sm:hidden">CV</span>
+              <span className="hidden sm:inline">CV Görüntüle / İndir</span>
             </button>
             <a
               href="#iletisim"
               className="group inline-flex items-center justify-center gap-2 rounded-xl border border-yellow-500/40 bg-slate-800/70 px-6 py-3 font-semibold text-yellow-400 backdrop-blur-md transition-all duration-300 hover:scale-[1.03] hover:bg-slate-700/70 hover:shadow-[0_0_24px_rgba(250,204,21,0.25)]"
             >
-              Iletisime Gec
+              İletişime Geç
               <ArrowRight size={17} className="transition-transform duration-300 group-hover:translate-x-1" />
             </a>
           </div>
         </section>
 
-        <section id="hakkimda" className="py-20">
+        <section id="hakkimda" className="py-20" aria-labelledby="about-heading">
           <div className="grid items-center gap-10 md:grid-cols-2">
             <div className="relative overflow-hidden rounded-2xl border border-yellow-500/20 bg-slate-800/45 p-2 shadow-2xl backdrop-blur-lg">
               {profile.aboutImageUrl ? (
                 <img
                   src={resolveImageUrl(profile.aboutImageUrl)}
-                  alt="Hakkimda"
+                  alt="Hakkımda"
                   className="h-[280px] w-full rounded-xl object-cover"
                 />
               ) : (
@@ -1423,14 +1391,18 @@ export default function App() {
             </div>
 
             <div>
-              <h3 className="mb-5 text-3xl font-semibold text-yellow-400">Hakkimda</h3>
+              <h2 id="about-heading" className="mb-5 font-display text-3xl font-semibold text-yellow-400">
+                Hakkımda
+              </h2>
               <p className="leading-relaxed text-gray-300">{profile.about}</p>
             </div>
           </div>
         </section>
 
-        <section id="yetenekler" className="py-20">
-          <h3 className="mb-8 text-3xl font-semibold text-yellow-400">Yetenekler</h3>
+        <section id="yetenekler" className="py-20" aria-labelledby="skills-heading">
+          <h2 id="skills-heading" className="mb-8 font-display text-3xl font-semibold text-yellow-400">
+            Yetenekler
+          </h2>
           <div className="grid gap-6 md:grid-cols-3">
             {skills.map((skill) => (
               <article
@@ -1440,8 +1412,9 @@ export default function App() {
                 <div className="mb-4 inline-flex items-center gap-2 text-yellow-400">
                   {skill.category === "Ana Diller" && <Code2 size={18} />}
                   {skill.category === "Frontend" && <Layers3 size={18} />}
-                  {skill.category === "Temel Muhendislik" && <Database size={18} />}
-                  <h4 className="text-lg font-semibold text-gray-100">{skill.category}</h4>
+                  {(skill.category === "Temel Mühendislik" ||
+                    skill.category === "Temel Muhendislik") && <Database size={18} />}
+                  <h3 className="text-lg font-semibold text-gray-100">{skill.category}</h3>
                 </div>
                 <ul className="space-y-2 text-gray-300">
                   {skill.items.map((item) => (
@@ -1456,10 +1429,12 @@ export default function App() {
           </div>
         </section>
 
-        <section id="projeler" className="py-20">
-          <h3 className="mb-8 text-3xl font-semibold text-yellow-400">Projeler</h3>
+        <section id="projeler" className="py-20" aria-labelledby="projects-heading">
+          <h2 id="projects-heading" className="mb-8 font-display text-3xl font-semibold text-yellow-400">
+            Projeler
+          </h2>
           {projects.length === 0 ? (
-            <p className="text-gray-400">Henuz proje eklenmedi.</p>
+            <p className="text-gray-400">Henüz proje eklenmedi.</p>
           ) : (
           <div className="grid gap-6 md:grid-cols-2">
             {projects.map((project) => {
@@ -1484,7 +1459,7 @@ export default function App() {
                   </div>
                 )}
                 <div className="p-6">
-                  <h4 className="text-xl font-semibold text-gray-100">{project.title}</h4>
+                  <h3 className="text-xl font-semibold text-gray-100">{project.title}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-gray-300">
                     {project.description}
                   </p>
@@ -1498,7 +1473,7 @@ export default function App() {
                       </span>
                     ))}
                   </div>
-                  {projectLink ? (
+                  {projectLink && projectLink !== "#" ? (
                     <a
                       href={projectLink}
                       target="_blank"
@@ -1506,7 +1481,7 @@ export default function App() {
                       className="mt-6 inline-flex items-center gap-2 rounded-lg border border-yellow-500/40 px-4 py-2 text-sm font-medium text-yellow-300 transition-all duration-300 hover:bg-yellow-500 hover:text-slate-900"
                     >
                       <Github size={16} />
-                      Projeyi Incele
+                      Projeyi İncele
                     </a>
                   ) : (
                     <span className="mt-6 inline-flex items-center gap-2 rounded-lg border border-yellow-500/20 px-4 py-2 text-sm text-gray-500">
@@ -1538,35 +1513,56 @@ export default function App() {
         className="mt-10 border-t border-yellow-500/10 bg-slate-950/50 backdrop-blur-xl"
       >
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 text-center sm:flex-row sm:px-6 lg:px-8 sm:text-left">
-          <p className="text-sm text-gray-300">
-            Near East University - Software Engineering (English) | 2nd Year Completed
-          </p>
-          <div className="flex items-center gap-3">
-            <a
-              href={`mailto:${profile.email}`}
-              aria-label="E-posta"
-              className="rounded-full border border-yellow-500/30 p-2 text-yellow-400 transition-all duration-300 hover:scale-105 hover:bg-yellow-500 hover:text-slate-900"
+          <div>
+            <p className="text-sm text-gray-300">
+              Yakın Doğu Üniversitesi — Yazılım Mühendisliği (İngilizce) · 2. sınıf tamamlandı
+            </p>
+            <p className="mt-1 text-xs text-gray-500">
+              © {new Date().getFullYear()} {profile.name}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setCvOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 px-4 py-2 text-sm text-yellow-400 transition-all duration-300 hover:bg-yellow-500 hover:text-slate-900"
             >
-              <Mail size={18} />
-            </a>
-            <a
-              href={profile.github}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className="rounded-full border border-yellow-500/30 p-2 text-yellow-400 transition-all duration-300 hover:scale-105 hover:bg-yellow-500 hover:text-slate-900"
-            >
-              <Github size={18} />
-            </a>
-            <a
-              href={profile.linkedin}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="rounded-full border border-yellow-500/30 p-2 text-yellow-400 transition-all duration-300 hover:scale-105 hover:bg-yellow-500 hover:text-slate-900"
-            >
-              <Linkedin size={18} />
-            </a>
+              <FileText size={16} />
+              CV
+            </button>
+            {profile.email && (
+              <a
+                href={`mailto:${profile.email}`}
+                aria-label="E-posta"
+                className="rounded-full border border-yellow-500/30 p-2 text-yellow-400 transition-all duration-300 hover:scale-105 hover:bg-yellow-500 hover:text-slate-900"
+              >
+                <Mail size={18} />
+              </a>
+            )}
+            {normalizeExternalUrl(profile.github) &&
+              normalizeExternalUrl(profile.github) !== "#" && (
+                <a
+                  href={normalizeExternalUrl(profile.github)}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="GitHub"
+                  className="rounded-full border border-yellow-500/30 p-2 text-yellow-400 transition-all duration-300 hover:scale-105 hover:bg-yellow-500 hover:text-slate-900"
+                >
+                  <Github size={18} />
+                </a>
+              )}
+            {normalizeExternalUrl(profile.linkedin) &&
+              normalizeExternalUrl(profile.linkedin) !== "#" && (
+                <a
+                  href={normalizeExternalUrl(profile.linkedin)}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="LinkedIn"
+                  className="rounded-full border border-yellow-500/30 p-2 text-yellow-400 transition-all duration-300 hover:scale-105 hover:bg-yellow-500 hover:text-slate-900"
+                >
+                  <Linkedin size={18} />
+                </a>
+              )}
           </div>
         </div>
       </footer>

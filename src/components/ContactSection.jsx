@@ -9,8 +9,8 @@ export default function ContactSection({
   contactSubmitting,
   contactStatus,
 }) {
-  const email = profile.email || "furkan@example.com";
-  const phone = profile.phone || "";
+  const email = profile.email?.trim() || "";
+  const phone = profile.phone?.trim() || "";
   const github = normalizeExternalUrl(profile.github);
   const linkedin = normalizeExternalUrl(profile.linkedin);
   const phoneHref = phone ? `tel:${phone.replace(/\s/g, "")}` : null;
@@ -19,15 +19,18 @@ export default function ContactSection({
     "w-full rounded-xl border border-white/10 bg-slate-900/50 px-4 py-3 text-base text-slate-100 outline-none backdrop-blur-md transition-all duration-300 placeholder:text-gray-500 focus:border-yellow-400/60 focus:ring-2 focus:ring-yellow-500/20";
 
   return (
-    <section id="iletisim" className="py-20">
+    <section id="iletisim" className="py-20" aria-labelledby="contact-heading">
       <div className="mb-10 text-center sm:text-left">
-        <p className="text-xs tracking-[0.2em] text-yellow-400 uppercase">Iletisim</p>
-        <h3 className="mt-2 text-3xl font-semibold text-yellow-400 sm:text-4xl">
-          Birlikte Calisalim
-        </h3>
+        <p className="text-xs tracking-[0.2em] text-yellow-400 uppercase">İletişim</p>
+        <h2
+          id="contact-heading"
+          className="mt-2 font-display text-3xl font-semibold text-yellow-400 sm:text-4xl"
+        >
+          Birlikte Çalışalım
+        </h2>
         <p className="mt-3 max-w-2xl text-gray-300">
-          Staj, is birligi veya proje gorusmeleri icin asagidaki kanallardan bana
-          ulasabilirsiniz.
+          Yazılım mühendisliği stajı, iş birliği veya proje görüşmeleri için aşağıdaki
+          kanallardan bana ulaşabilirsiniz.
         </p>
       </div>
 
@@ -37,26 +40,26 @@ export default function ContactSection({
             {
               icon: Mail,
               title: "E-posta",
-              value: email,
-              href: `mailto:${email}`,
+              value: email || "E-posta eklenmedi",
+              href: email ? `mailto:${email}` : null,
             },
             {
               icon: MapPin,
               title: "Konum",
-              value: "Lefkosa, KKTC",
+              value: "Lefkoşa, KKTC",
               href: null,
             },
             {
               icon: Linkedin,
               title: "LinkedIn",
-              value: "Profilimi ziyaret edin",
-              href: linkedin,
+              value: linkedin && linkedin !== "#" ? "Profilimi ziyaret edin" : "Profil eklenmedi",
+              href: linkedin && linkedin !== "#" ? linkedin : null,
             },
             {
               icon: Github,
               title: "GitHub",
-              value: "Projelerimi inceleyin",
-              href: github,
+              value: github && github !== "#" ? "Projelerimi inceleyin" : "Profil eklenmedi",
+              href: github && github !== "#" ? github : null,
             },
             {
               icon: Phone,
@@ -75,11 +78,11 @@ export default function ContactSection({
                 </div>
                 <div>
                   <p className="text-sm font-medium text-yellow-300/90">{title}</p>
-                  {href && href !== "#" ? (
+                  {href ? (
                     <a
                       href={href}
-                      target="_blank"
-                      rel="noreferrer"
+                      target={href.startsWith("mailto:") || href.startsWith("tel:") ? undefined : "_blank"}
+                      rel={href.startsWith("http") ? "noreferrer" : undefined}
                       className="mt-1 block text-sm text-gray-300 transition-colors duration-300 hover:text-yellow-400"
                     >
                       {value}
@@ -91,13 +94,12 @@ export default function ContactSection({
               </div>
             </div>
           ))}
-
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-slate-800/35 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-8">
-          <h4 className="text-xl font-semibold text-slate-100">Mesaj Gonderin</h4>
+          <h3 className="text-xl font-semibold text-slate-100">Mesaj Gönderin</h3>
           <p className="mt-2 text-sm text-gray-400">
-            Formu doldurun, en kisa surede size donus yapayim.
+            Formu doldurun, en kısa sürede size dönüş yapayım.
           </p>
 
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
@@ -108,12 +110,13 @@ export default function ContactSection({
                   type="text"
                   name="name"
                   autoComplete="name"
-                  placeholder="Adiniz Soyadiniz"
+                  placeholder="Adınız Soyadınız"
                   value={contactForm.name}
                   onChange={(event) =>
                     setContactForm((prev) => ({ ...prev, name: event.target.value }))
                   }
                   className={inputClass}
+                  required
                 />
               </label>
               <label>
@@ -129,6 +132,7 @@ export default function ContactSection({
                     setContactForm((prev) => ({ ...prev, email: event.target.value }))
                   }
                   className={inputClass}
+                  required
                 />
               </label>
             </div>
@@ -138,7 +142,7 @@ export default function ContactSection({
               <input
                 type="text"
                 name="subject"
-                placeholder="Ornek: Yazilim Muhendisligi Staj Basvurusu"
+                placeholder="Örn: Yazılım Mühendisliği Staj Başvurusu"
                 value={contactForm.subject}
                 onChange={(event) =>
                   setContactForm((prev) => ({ ...prev, subject: event.target.value }))
@@ -148,16 +152,17 @@ export default function ContactSection({
             </label>
 
             <label>
-              <span className="mb-2 block text-sm text-gray-300">Mesajiniz</span>
+              <span className="mb-2 block text-sm text-gray-300">Mesajınız</span>
               <textarea
                 rows={5}
                 name="message"
-                placeholder="Mesajinizi yazin..."
+                placeholder="Mesajınızı yazın..."
                 value={contactForm.message}
                 onChange={(event) =>
                   setContactForm((prev) => ({ ...prev, message: event.target.value }))
                 }
                 className={`resize-none ${inputClass}`}
+                required
               />
             </label>
 
@@ -166,7 +171,7 @@ export default function ContactSection({
               disabled={contactSubmitting}
               className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-yellow-400/40 bg-gradient-to-r from-yellow-500 to-amber-400 px-6 py-3.5 font-semibold text-slate-900 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(250,204,21,0.45)] disabled:opacity-60 sm:w-auto"
             >
-              {contactSubmitting ? "Gonderiliyor..." : "Mesaj Gonder"}
+              {contactSubmitting ? "Gönderiliyor..." : "Mesaj Gönder"}
               {contactSubmitting ? (
                 <Send size={16} />
               ) : (
@@ -177,11 +182,17 @@ export default function ContactSection({
               )}
             </button>
 
+            <p className="text-xs leading-relaxed text-gray-500">
+              Gönderdiğiniz bilgiler yalnızca size dönüş yapmak amacıyla işlenir; üçüncü
+              taraflarla paylaşılmaz (KVKK).
+            </p>
+
             {contactStatus.text && (
               <p
                 className={`text-sm ${
                   contactStatus.type === "error" ? "text-red-300" : "text-green-300"
                 }`}
+                role="status"
               >
                 {contactStatus.text}
               </p>

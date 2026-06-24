@@ -15,13 +15,13 @@ const CV_PROJECTS = [
   {
     title: "Otel Misafir Geri Bildirim Analizi",
     description:
-      "Python tabanli analiz araci ile misafir yorumlarini siniflandiran, duygu analizi yapan ve yonetime karar destegi saglayan veri gorsellestirmeleri.",
+      "Python tabanlı analiz aracı ile misafir yorumlarını sınıflandıran, duygu analizi yapan ve yönetime karar desteği sağlayan veri görselleştirmeleri.",
     tech: ["Python", "Pandas", "Matplotlib"],
   },
   {
-    title: "Premium Restoran Rezervasyon Arayuzu",
+    title: "Premium Restoran Rezervasyon Arayüzü",
     description:
-      "Luks hizmet anlayisina uygun, hizli ve kullanici dostu masa rezervasyon deneyimi sunan modern arayuz.",
+      "Hızlı ve kullanıcı dostu masa rezervasyon deneyimi sunan modern arayüz.",
     tech: ["JavaScript", "Tailwind CSS"],
   },
 ];
@@ -29,13 +29,15 @@ const CV_PROJECTS = [
 const CV_SKILLS = [
   { label: "Diller", items: ["Python", "JavaScript"] },
   { label: "Web", items: ["HTML5", "CSS3", "Tailwind CSS"] },
-  { label: "Araclar", items: ["Git", "GitHub", "Veri Analizi (Pandas / Matplotlib)"] },
+  { label: "Araçlar", items: ["Git", "GitHub", "Veri Analizi (Pandas / Matplotlib)"] },
 ];
 
 export default function DigitalCv({ isOpen, onClose, profile }) {
   if (!isOpen) return null;
 
-  const email = profile.email || "furkan@example.com";
+  const displayName = profile.name || "Furkan Enes Kum";
+  const displayTitle = profile.title || "Yazılım Mühendisliği Öğrencisi";
+  const email = profile.email?.trim() || "";
   const github = normalizeExternalUrl(profile.github);
   const linkedin = normalizeExternalUrl(profile.linkedin);
 
@@ -62,7 +64,7 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
               className="inline-flex items-center gap-2 rounded-xl border border-yellow-500/40 bg-yellow-500/10 px-4 py-2.5 text-sm font-semibold text-yellow-300 transition-all duration-300 hover:bg-yellow-500 hover:text-slate-900"
             >
               <Printer size={16} />
-              PDF Olarak Yazdir / Indir
+              PDF Olarak Yazdır / İndir
             </button>
             <button
               type="button"
@@ -87,12 +89,12 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
                 </p>
                 <h2
                   id="cv-title"
-                  className="mt-2 text-3xl font-bold text-slate-100 sm:text-4xl print:text-black"
+                  className="mt-2 font-display text-3xl font-bold text-slate-100 sm:text-4xl print:text-black"
                 >
-                  Furkan Enes Kum
+                  {displayName}
                 </h2>
                 <p className="mt-2 text-lg text-yellow-300/90 print:text-gray-700">
-                  Yazilim Muhendisligi Ogrencisi
+                  {displayTitle}
                 </p>
               </div>
               <div className="hidden sm:block print:block">
@@ -102,17 +104,25 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { icon: Mail, label: email, href: `mailto:${email}` },
-                { icon: MapPin, label: "Lefkosa, KKTC", href: null },
-                { icon: Github, label: "GitHub", href: github },
-                { icon: Linkedin, label: "LinkedIn", href: linkedin },
+                { icon: Mail, label: email || "E-posta eklenmedi", href: email ? `mailto:${email}` : null },
+                { icon: MapPin, label: "Lefkoşa, KKTC", href: null },
+                {
+                  icon: Github,
+                  label: "GitHub",
+                  href: github && github !== "#" ? github : null,
+                },
+                {
+                  icon: Linkedin,
+                  label: "LinkedIn",
+                  href: linkedin && linkedin !== "#" ? linkedin : null,
+                },
               ].map(({ icon: Icon, label, href }) => (
                 <div
                   key={label}
                   className="flex items-center gap-3 rounded-xl border border-yellow-500/15 bg-slate-950/40 px-4 py-3 print:border-gray-200 print:bg-white"
                 >
                   <Icon className="shrink-0 text-yellow-400 print:text-gray-600" size={16} />
-                  {href && href !== "#" ? (
+                  {href ? (
                     <a
                       href={href}
                       target="_blank"
@@ -135,31 +145,31 @@ export default function DigitalCv({ isOpen, onClose, profile }) {
             <section>
               <h3 className="flex items-center gap-2 text-sm font-semibold tracking-[0.18em] text-yellow-400 uppercase print:text-gray-800">
                 <Briefcase size={15} />
-                Ozet
+                Özet
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-gray-300 sm:text-base print:text-[13px] print:leading-relaxed print:text-gray-800">
-                Yakin Dogu Universitesi&apos;nde %100 Ingilizce Yazilim Muhendisligi egitiminde 2.
-                sinifi basariyla tamamlamis bir yazilim muhendisligi ogrencisiyim. Python ve
-                JavaScript dillerine odaklanarak algoritma ve modern arayuz gelistirme konularinda
-                yetkinlik kazandim. Merit Royal bunyasinde staj yaparak operasyonel sureclerin
-                optimizasyonu ve veri analitigi cozumlerine deger katmayi hedefliyorum.
+                Yakın Doğu Üniversitesi&apos;nde %100 İngilizce Yazılım Mühendisliği eğitiminde 2.
+                sınıfı başarıyla tamamlamış bir yazılım mühendisliği öğrencisiyim. Python ve
+                JavaScript dillerine odaklanarak algoritma ve modern arayüz geliştirme konularında
+                yetkinlik kazandım. Yazılım mühendisliği stajı ile operasyonel süreçlerin
+                optimizasyonu ve veri analitiği çözümlerine değer katmayı hedefliyorum.
               </p>
             </section>
 
             <section>
               <h3 className="flex items-center gap-2 text-sm font-semibold tracking-[0.18em] text-yellow-400 uppercase print:text-gray-800">
                 <GraduationCap size={15} />
-                Egitim
+                Eğitim
               </h3>
               <div className="mt-3 rounded-xl border border-yellow-500/15 bg-slate-950/30 p-4 print:border-gray-200 print:bg-white">
                 <p className="font-semibold text-slate-100 print:text-black">
-                  Yakin Dogu Universitesi (Near East University)
+                  Yakın Doğu Üniversitesi (Near East University)
                 </p>
                 <p className="mt-1 text-sm text-gray-400 print:text-gray-600">
-                  Yazilim Muhendisligi (Ingilizce) · 2024 - Devam
+                  Yazılım Mühendisliği (İngilizce) · 2024 — Devam
                 </p>
                 <p className="mt-2 text-sm text-gray-300 print:text-gray-700">
-                  2. sinif basariyla tamamlandi.
+                  2. sınıf başarıyla tamamlandı.
                 </p>
               </div>
             </section>
