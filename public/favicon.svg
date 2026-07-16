@@ -1,14 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <rect width="64" height="64" rx="14" fill="#0f172a"/>
-  <g fill="#FACC15">
-    <rect x="9" y="9" width="7" height="46"/>
-    <rect x="38" y="9" width="7" height="46"/>
-    <rect x="9" y="9" width="36" height="7"/>
-    <rect x="9" y="28" width="36" height="7"/>
-    <rect x="9" y="48" width="36" height="7"/>
-  </g>
-  <g fill="none" stroke="#FACC15" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter">
-    <path d="M45 32 L57 10"/>
-    <path d="M45 32 L57 54"/>
+  <g fill="#D4AF37">
+    <rect x="8" y="8" width="7" height="48"/>
+    <rect x="37" y="8" width="7" height="48"/>
+    <rect x="8" y="8" width="36" height="7"/>
+    <rect x="8" y="27" width="36" height="7"/>
+    <rect x="8" y="49" width="36" height="7"/>
+    <polygon points="44,27 44,34 59,8 52,8"/>
+    <polygon points="44,27 44,34 59,56 52,56"/>
   </g>
 </svg>

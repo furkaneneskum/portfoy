@@ -1,4 +1,8 @@
-export default function Logo({ className = "h-8 w-8 text-yellow-400", title = "FEK monogram", decorative = false }) {
+export default function Logo({
+  className = "h-8 w-8",
+  title = "FEK monogram",
+  decorative = false,
+}) {
   return (
     <svg
       viewBox="0 0 64 64"
@@ -8,24 +12,21 @@ export default function Logo({ className = "h-8 w-8 text-yellow-400", title = "F
       aria-label={decorative ? undefined : title}
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* F + E: ortak sol omurga, üst ve orta bar = F; alt bar = E */}
-      <g fill="currentColor">
-        <rect x="9" y="9" width="7" height="46" />
-        <rect x="38" y="9" width="7" height="46" />
-        <rect x="9" y="9" width="36" height="7" />
-        <rect x="9" y="28" width="36" height="7" />
-        <rect x="9" y="48" width="36" height="7" />
-      </g>
-      {/* K: E'nin orta hizasından çaprazlar */}
-      <g
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="7"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-      >
-        <path d="M45 32 L57 10" />
-        <path d="M45 32 L57 54" />
+      <g fill="#D4AF37">
+        {/* Sol dikey omurga — F & E paylaşımlı */}
+        <rect x="8" y="8" width="7" height="48" />
+        {/* E sağ dikey — K ile entegre */}
+        <rect x="37" y="8" width="7" height="48" />
+        {/* F üst bar + E üst bar */}
+        <rect x="8" y="8" width="36" height="7" />
+        {/* F orta bar + E orta bar (F burada E ile birleşir) */}
+        <rect x="8" y="27" width="36" height="7" />
+        {/* E alt bar */}
+        <rect x="8" y="49" width="36" height="7" />
+        {/* K üst çapraz */}
+        <polygon points="44,27 44,34 59,8 52,8" />
+        {/* K alt çapraz */}
+        <polygon points="44,27 44,34 59,56 52,56" />
       </g>
     </svg>
   );
