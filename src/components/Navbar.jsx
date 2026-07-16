@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Menu, Sparkles, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import Logo from "./Logo";
 
 const NAV_LINKS = [
   { label: "Hakkımda", href: "#hakkimda" },
@@ -27,9 +28,9 @@ export default function Navbar({ profileName, onOpenCv }) {
       >
         <a
           href="#hero"
-          className="inline-flex items-center gap-2 text-sm font-semibold tracking-[0.15em] text-luxury-gold uppercase"
+          className="group inline-flex items-center gap-2.5 text-sm font-semibold tracking-[0.12em] text-luxury-gold uppercase transition-opacity duration-300 hover:opacity-90"
         >
-          <Sparkles size={16} />
+          <Logo className="h-9 w-9 shrink-0 transition-transform duration-300 group-hover:scale-105" />
           <span className="max-w-[140px] truncate sm:max-w-none">{profileName}</span>
         </a>
 

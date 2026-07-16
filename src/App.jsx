@@ -13,7 +13,6 @@ import {
   Database,
   Layers3,
   GraduationCap,
-  Sparkles,
   ShieldCheck,
   LayoutDashboard,
   FolderKanban,
@@ -31,6 +30,7 @@ import {
 import DigitalCv from "./components/DigitalCv";
 import ContactSection from "./components/ContactSection";
 import Navbar from "./components/Navbar";
+import Logo from "./components/Logo";
 import { auth, isFirebaseConfigured, firebaseProjectId, checkFirestoreHealth } from "./firebase/config";
 import {
   DEFAULT_PROFILE,
@@ -1330,7 +1330,7 @@ export default function App() {
           </div>
 
           <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-4 py-1 text-xs tracking-[0.18em] text-yellow-400 uppercase">
-            <Sparkles size={14} />
+            <Logo className="h-4 w-4" decorative />
             Staj & Portföy
           </p>
 
@@ -1521,13 +1521,16 @@ export default function App() {
         className="mt-10 border-t border-yellow-500/10 bg-slate-950/50 backdrop-blur-xl"
       >
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 text-center sm:flex-row sm:px-6 lg:px-8 sm:text-left">
-          <div>
-            <p className="text-sm text-gray-300">
-              Yakın Doğu Üniversitesi — Yazılım Mühendisliği (İngilizce) · 2. sınıf tamamlandı
-            </p>
-            <p className="mt-1 text-xs text-gray-500">
-              © {new Date().getFullYear()} {profile.name}
-            </p>
+          <div className="flex items-start gap-3">
+            <Logo className="mt-0.5 h-8 w-8 shrink-0 opacity-90" decorative />
+            <div>
+              <p className="text-sm text-gray-300">
+                Yakın Doğu Üniversitesi — Yazılım Mühendisliği (İngilizce) · 2. sınıf tamamlandı
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                © {new Date().getFullYear()} {profile.name}
+              </p>
+            </div>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
