@@ -25,6 +25,37 @@ h1,
   font-family: "Playfair Display", Georgia, serif;
 }
 
+/* Mobil menü — Tailwind'e ek yedek kurallar */
+@media (max-width: 1023px) {
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .mobile-nav-btn,
+  .mobile-nav-strip {
+    display: block !important;
+  }
+
+  .mobile-nav-btn {
+    display: inline-flex !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-nav-btn,
+  .mobile-nav-strip {
+    display: none !important;
+  }
+
+  .mobile-nav-drawer {
+    display: none !important;
+  }
+
+  .desktop-nav {
+    display: flex !important;
+  }
+}
+
 .cv-profile-photo-img {
   width: 155%;
   height: 155%;
