@@ -8,19 +8,24 @@ export default function Logo({ className = "h-8 w-8 text-yellow-400", title = "F
       aria-label={decorative ? undefined : title}
       xmlns="http://www.w3.org/2000/svg"
     >
+      {/* F + E: ortak sol omurga, üst ve orta bar = F; alt bar = E */}
+      <g fill="currentColor">
+        <rect x="9" y="9" width="7" height="46" />
+        <rect x="38" y="9" width="7" height="46" />
+        <rect x="9" y="9" width="36" height="7" />
+        <rect x="9" y="28" width="36" height="7" />
+        <rect x="9" y="48" width="36" height="7" />
+      </g>
+      {/* K: E'nin orta hizasından çaprazlar */}
       <g
         fill="none"
         stroke="currentColor"
-        strokeWidth="5.5"
+        strokeWidth="7"
         strokeLinecap="square"
         strokeLinejoin="miter"
       >
-        <path d="M11 11 H41" />
-        <path d="M11 11 V53" />
-        <path d="M11 32 H37" />
-        <path d="M11 53 H41" />
-        <path d="M37 32 L53 11" />
-        <path d="M37 32 L53 53" />
+        <path d="M45 32 L57 10" />
+        <path d="M45 32 L57 54" />
       </g>
     </svg>
   );

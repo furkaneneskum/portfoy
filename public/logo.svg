@@ -1,10 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <g fill="none" stroke="#FACC15" stroke-width="5.5" stroke-linecap="square" stroke-linejoin="miter">
-    <path d="M11 11 H41"/>
-    <path d="M11 11 V53"/>
-    <path d="M11 32 H37"/>
-    <path d="M11 53 H41"/>
-    <path d="M37 32 L53 11"/>
-    <path d="M37 32 L53 53"/>
+  <g fill="#FACC15">
+    <rect x="9" y="9" width="7" height="46"/>
+    <rect x="38" y="9" width="7" height="46"/>
+    <rect x="9" y="9" width="36" height="7"/>
+    <rect x="9" y="28" width="36" height="7"/>
+    <rect x="9" y="48" width="36" height="7"/>
+  </g>
+  <g fill="none" stroke="#FACC15" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M45 32 L57 10"/>
+    <path d="M45 32 L57 54"/>
   </g>
 </svg>
