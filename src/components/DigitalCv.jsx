@@ -153,7 +153,7 @@ export default function DigitalCv({ isOpen, onClose, profile, locale = "tr" }) {
                   <img
                     src={profileImage}
                     alt={displayName}
-                    className="h-full w-full scale-[1.08] object-cover object-[center_18%]"
+                    className="h-full w-full scale-[1.22] object-cover object-[center_14%] print:scale-[1.22] print:object-[center_14%]"
                   />
                 </div>
               </div>
