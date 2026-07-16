@@ -1321,11 +1321,13 @@ export default function App() {
           id="hero"
           className="flex min-h-[88vh] flex-col items-center justify-center text-center"
         >
-          <img
-            src={resolveProfileImageUrl(profile.profileImageUrl)}
-            alt={profile.name}
-            className="mb-8 h-44 w-44 rounded-full border-2 border-yellow-500/40 object-cover object-center shadow-lg shadow-yellow-500/20 sm:h-52 sm:w-52 md:h-60 md:w-60"
-          />
+          <div className="mb-8 h-44 w-44 overflow-hidden rounded-full border-2 border-yellow-500/40 shadow-lg shadow-yellow-500/20 sm:h-52 sm:w-52 md:h-60 md:w-60">
+            <img
+              src={resolveProfileImageUrl(profile.profileImageUrl)}
+              alt={profile.name}
+              className="h-full w-full scale-[1.08] object-cover object-[center_18%]"
+            />
+          </div>
 
           <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-4 py-1 text-xs tracking-[0.18em] text-yellow-400 uppercase">
             <Sparkles size={14} />
