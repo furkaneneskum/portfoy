@@ -31,19 +31,13 @@ h1,
     display: none !important;
   }
 
-  .mobile-nav-btn,
-  .mobile-nav-strip {
-    display: block !important;
-  }
-
   .mobile-nav-btn {
     display: inline-flex !important;
   }
 }
 
 @media (min-width: 1024px) {
-  .mobile-nav-btn,
-  .mobile-nav-strip {
+  .mobile-nav-btn {
     display: none !important;
   }
 

@@ -71,35 +71,6 @@ function MobileDrawer({ open, onClose, profileName, onNav }) {
   );
 }
 
-function MobileNavStrip({ onNav }) {
-  return (
-    <div className="mobile-nav-strip border-t border-yellow-500/10 bg-slate-900/95 lg:hidden">
-      <div className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-2.5 sm:px-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {NAV_LINKS.map((item) =>
-          item.href ? (
-            <a
-              key={item.label}
-              href={item.href}
-              className="shrink-0 rounded-full border border-yellow-500/25 bg-slate-800/80 px-3.5 py-2 text-xs font-medium text-gray-200 active:bg-yellow-500/20"
-            >
-              {item.label}
-            </a>
-          ) : (
-            <button
-              key={item.label}
-              type="button"
-              onClick={() => onNav(item)}
-              className="shrink-0 rounded-full border border-yellow-500/25 bg-slate-800/80 px-3.5 py-2 text-xs font-medium text-gray-200 active:bg-yellow-500/20"
-            >
-              {item.label}
-            </button>
-          )
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default function Navbar({ profileName, onOpenCv }) {
   const [open, setOpen] = useState(false);
 
@@ -165,8 +136,6 @@ export default function Navbar({ profileName, onOpenCv }) {
           ))}
         </ul>
       </nav>
-
-      <MobileNavStrip onNav={handleNav} />
 
       <MobileDrawer
         open={open}
