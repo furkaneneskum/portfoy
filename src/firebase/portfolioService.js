@@ -27,7 +27,7 @@ export const DEFAULT_PROFILE = {
   about:
     "Yakın Doğu Üniversitesi'nde %100 İngilizce Yazılım Mühendisliği eğitiminde 2. sınıfı başarıyla tamamladım. Akademik birikimimi Python ve JavaScript ile birleştirerek gerçek dünya problemlerine pratik çözümler üretiyorum. Konaklama ve hizmet sektöründe dijital dönüşümün operasyonel verimlilik ve müşteri deneyimi üzerindeki etkisine inanıyorum. Yazılım mühendisliği stajı ile öğrendiklerimi kurumsal projelere taşımayı hedefliyorum.",
   profileImageUrl: "/projects/profil.jpeg",
-  aboutImageUrl: "",
+  aboutImageUrl: "/projects/hakkimda.jpeg",
   email: "kumfurkanenes1@gmail.com",
   phone: "05428528282",
   github: "https://github.com/furkaneneskum",

@@ -49,7 +49,7 @@ import {
   testFirestoreWrite,
   updateProject,
 } from "./firebase/portfolioService";
-import { normalizeExternalUrl, normalizeImageUrl, resolveImageUrl, resolveProfileImageUrl } from "./utils/url";
+import { normalizeExternalUrl, normalizeImageUrl, resolveImageUrl, resolveProfileImageUrl, resolveAboutImageUrl } from "./utils/url";
 
 const SECRET_ADMIN_CODE = "furkanadmin";
 
@@ -1384,17 +1384,11 @@ export default function App() {
         <section id="hakkimda" className="py-20" aria-labelledby="about-heading">
           <div className="grid items-center gap-10 md:grid-cols-2">
             <div className="relative overflow-hidden rounded-2xl border border-yellow-500/20 bg-slate-800/45 p-2 shadow-2xl backdrop-blur-lg">
-              {profile.aboutImageUrl ? (
-                <img
-                  src={resolveImageUrl(profile.aboutImageUrl)}
-                  alt="Hakkımda"
-                  className="h-[280px] w-full rounded-xl object-cover"
-                />
-              ) : (
-                <div className="flex min-h-[280px] items-center justify-center">
-                  <GraduationCap className="h-20 w-20 text-yellow-400" />
-                </div>
-              )}
+              <img
+                src={resolveAboutImageUrl(profile.aboutImageUrl)}
+                alt="Hakkımda"
+                className="h-[320px] w-full rounded-xl object-cover object-center sm:h-[380px]"
+              />
             </div>
 
             <div>

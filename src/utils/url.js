@@ -10,6 +10,7 @@ function toProjectsPath(filename) {
 }
 
 export const DEFAULT_PROFILE_IMAGE = "/projects/profil.jpeg";
+export const DEFAULT_ABOUT_IMAGE = "/projects/hakkimda.jpeg";
 
 export function normalizeImageUrl(url) {
   const value = (url || "").trim();
@@ -91,4 +92,8 @@ export function resolveImageUrl(url) {
 
 export function resolveProfileImageUrl(url) {
   return resolveImageUrl(url || DEFAULT_PROFILE_IMAGE);
+}
+
+export function resolveAboutImageUrl(url) {
+  return resolveImageUrl(url || DEFAULT_ABOUT_IMAGE);
 }
