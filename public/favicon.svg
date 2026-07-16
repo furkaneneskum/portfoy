@@ -1,12 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <rect width="64" height="64" rx="14" fill="#0f172a"/>
   <g fill="#D4AF37">
-    <rect x="8" y="8" width="7" height="48"/>
-    <rect x="37" y="8" width="7" height="48"/>
-    <rect x="8" y="8" width="36" height="7"/>
-    <rect x="8" y="27" width="36" height="7"/>
-    <rect x="8" y="49" width="36" height="7"/>
-    <polygon points="44,27 44,34 59,8 52,8"/>
-    <polygon points="44,27 44,34 59,56 52,56"/>
+    <rect x="7" y="11" width="5" height="42"/>
+    <rect x="7" y="11" width="17" height="5"/>
+    <rect x="7" y="28" width="13" height="5"/>
+    <rect x="26" y="11" width="5" height="42"/>
+    <rect x="26" y="11" width="16" height="5"/>
+    <rect x="26" y="28" width="16" height="5"/>
+    <rect x="26" y="46" width="16" height="5"/>
+    <rect x="37" y="11" width="5" height="42"/>
+    <rect x="46" y="11" width="5" height="42"/>
+    <polygon points="51,28 51,33 61,11 56,11"/>
+    <polygon points="51,28 51,33 61,53 56,53"/>
   </g>
 </svg>

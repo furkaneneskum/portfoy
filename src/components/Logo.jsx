@@ -13,20 +13,22 @@ export default function Logo({
       xmlns="http://www.w3.org/2000/svg"
     >
       <g fill="#D4AF37">
-        {/* Sol dikey omurga — F & E paylaşımlı */}
-        <rect x="8" y="8" width="7" height="48" />
-        {/* E sağ dikey — K ile entegre */}
-        <rect x="37" y="8" width="7" height="48" />
-        {/* F üst bar + E üst bar */}
-        <rect x="8" y="8" width="36" height="7" />
-        {/* F orta bar + E orta bar (F burada E ile birleşir) */}
-        <rect x="8" y="27" width="36" height="7" />
-        {/* E alt bar */}
-        <rect x="8" y="49" width="36" height="7" />
-        {/* K üst çapraz */}
-        <polygon points="44,27 44,34 59,8 52,8" />
-        {/* K alt çapraz */}
-        <polygon points="44,27 44,34 59,56 52,56" />
+        {/* F */}
+        <rect x="7" y="11" width="5" height="42" />
+        <rect x="7" y="11" width="17" height="5" />
+        <rect x="7" y="28" width="13" height="5" />
+
+        {/* E */}
+        <rect x="26" y="11" width="5" height="42" />
+        <rect x="26" y="11" width="16" height="5" />
+        <rect x="26" y="28" width="16" height="5" />
+        <rect x="26" y="46" width="16" height="5" />
+        <rect x="37" y="11" width="5" height="42" />
+
+        {/* K */}
+        <rect x="46" y="11" width="5" height="42" />
+        <polygon points="51,28 51,33 61,11 56,11" />
+        <polygon points="51,28 51,33 61,53 56,53" />
       </g>
     </svg>
   );
