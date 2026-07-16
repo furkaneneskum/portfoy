@@ -63,7 +63,25 @@ export default function DigitalCv({ isOpen, onClose, profile, locale = "tr" }) {
   const linkedin = normalizeExternalUrl(profile.linkedin);
   const profileImage = resolveProfileImageUrl(profile.profileImageUrl);
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    const source = document.getElementById("cv-print-area");
+    if (!source) return;
+
+    document.getElementById("cv-print-clone")?.remove();
+
+    const container = document.createElement("div");
+    container.id = "cv-print-clone";
+    container.appendChild(source.cloneNode(true));
+    document.body.appendChild(container);
+
+    const cleanup = () => {
+      container.remove();
+      window.removeEventListener("afterprint", cleanup);
+    };
+
+    window.addEventListener("afterprint", cleanup);
+    window.print();
+  };
 
   const contactItems = [
     {
@@ -90,14 +108,14 @@ export default function DigitalCv({ isOpen, onClose, profile, locale = "tr" }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-slate-950/85 p-4 backdrop-blur-md print:hidden sm:p-6"
+      className="cv-print-modal fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-slate-950/85 p-4 backdrop-blur-md sm:p-6"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="cv-title"
     >
       <div
-        className="relative my-4 w-full max-w-5xl"
+        className="cv-print-shell relative my-4 w-full max-w-5xl"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 no-print">
