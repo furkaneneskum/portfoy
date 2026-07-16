@@ -25,6 +25,16 @@ h1,
   font-family: "Playfair Display", Georgia, serif;
 }
 
+.cv-profile-photo-img {
+  width: 155%;
+  height: 155%;
+  max-width: none;
+  margin-left: -27%;
+  margin-top: -20%;
+  object-fit: cover;
+  object-position: center 8%;
+}
+
 @media print {
   @page {
     size: A4;
@@ -73,6 +83,22 @@ h1,
   }
 
   #cv-print-clone .overflow-hidden {
-    overflow: visible !important;
+    overflow: hidden !important;
+  }
+
+  #cv-print-clone .cv-profile-photo {
+    overflow: hidden !important;
+  }
+
+  #cv-print-clone .cv-profile-photo-img,
+  .cv-profile-photo-img {
+    width: 165% !important;
+    height: 165% !important;
+    max-width: none !important;
+    margin-left: -32% !important;
+    margin-top: -24% !important;
+    object-fit: cover !important;
+    object-position: center 6% !important;
+    transform: none !important;
   }
 }

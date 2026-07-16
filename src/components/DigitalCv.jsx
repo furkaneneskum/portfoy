@@ -149,11 +149,11 @@ export default function DigitalCv({ isOpen, onClose, profile, locale = "tr" }) {
           <div className="flex flex-col md:flex-row">
             <aside className="cv-sidebar w-full bg-slate-950 p-6 md:w-[34%] md:p-8 print:bg-slate-900">
               <div className="flex justify-center">
-                <div className="h-36 w-36 overflow-hidden rounded-full border-4 border-yellow-500/40 shadow-lg shadow-yellow-500/10">
+                <div className="cv-profile-photo h-36 w-36 overflow-hidden rounded-full border-4 border-yellow-500/40 shadow-lg shadow-yellow-500/10">
                   <img
                     src={profileImage}
                     alt={displayName}
-                    className="h-full w-full scale-[1.22] object-cover object-[center_14%] print:scale-[1.22] print:object-[center_14%]"
+                    className="cv-profile-photo-img h-full w-full object-cover"
                   />
                 </div>
               </div>
