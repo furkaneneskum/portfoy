@@ -35,7 +35,7 @@ export const CV_LOCALES = {
         "1 yıl İngilizce hazırlık programı tamamlandı. Bölümde 2. sınıf başarıyla tamamlandı.",
     },
     goalText:
-      "Yazılım mühendisliği alanında staj ve proje deneyimi kazanarak teorik bilgimi pratiğe dönüştürmeyi amaçlıyorum. Kurumsal veya girişim ortamında modern teknolojilerle sürdürülebilir, kullanıcı odaklı yazılım çözümleri geliştirmek istiyorum.",
+      "Yazılım mühendisliği alanında proje deneyimi kazanarak teorik bilgimi pratiğe dönüştürmeyi amaçlıyorum. Kurumsal veya girişim ortamında modern teknolojilerle sürdürülebilir, kullanıcı odaklı yazılım çözümleri geliştirmek istiyorum.",
   },
   en: {
     modalTitle: "Digital CV",
@@ -73,7 +73,7 @@ export const CV_LOCALES = {
         "One-year English preparatory program completed. Second year of the major completed successfully.",
     },
     goalText:
-      "I aim to turn theoretical knowledge into practice through internships and project experience in software engineering. I want to build sustainable, user-focused software solutions with modern technologies in corporate or startup environments.",
+      "I aim to turn theoretical knowledge into practice through project experience in software engineering. I want to build sustainable, user-focused software solutions with modern technologies in corporate or startup environments.",
   },
 };
 

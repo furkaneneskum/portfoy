@@ -1329,7 +1329,7 @@ export default function App() {
           </div>
 
           <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-4 py-1 text-xs tracking-[0.18em] text-yellow-400 uppercase">
-            Staj & Portföy
+            Kişisel Portföy
           </p>
 
           <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
@@ -1341,8 +1341,8 @@ export default function App() {
           </p>
 
           <p className="mt-6 max-w-2xl rounded-xl border border-yellow-500/20 bg-slate-800/40 px-5 py-3 text-sm text-gray-300">
-            Yazılım mühendisliği stajı için başvuruda bulunuyorum. Projelerimi inceleyebilir,
-            CV&apos;mi indirebilir veya doğrudan iletişime geçebilirsiniz.
+            Projelerimi, yeteneklerimi ve çalışmalarımı bu sitede paylaşıyorum. CV&apos;mi
+            inceleyebilir veya doğrudan iletişime geçebilirsiniz.
           </p>
 
           <div className="mt-10 flex flex-col flex-wrap items-center justify-center gap-4 sm:flex-row">

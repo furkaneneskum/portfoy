@@ -29,8 +29,8 @@ export default function ContactSection({
           Birlikte Çalışalım
         </h2>
         <p className="mt-3 max-w-2xl text-gray-300">
-          Yazılım mühendisliği stajı, iş birliği veya proje görüşmeleri için aşağıdaki
-          kanallardan bana ulaşabilirsiniz.
+          İş birliği, proje görüşmeleri veya sorularınız için aşağıdaki kanallardan bana
+          ulaşabilirsiniz.
         </p>
       </div>
 
@@ -142,7 +142,7 @@ export default function ContactSection({
               <input
                 type="text"
                 name="subject"
-                placeholder="Örn: Yazılım Mühendisliği Staj Başvurusu"
+                placeholder="Örn: Proje İş Birliği"
                 value={contactForm.subject}
                 onChange={(event) =>
                   setContactForm((prev) => ({ ...prev, subject: event.target.value }))
