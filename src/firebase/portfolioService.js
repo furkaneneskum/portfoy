@@ -26,7 +26,7 @@ export const DEFAULT_PROFILE = {
     "Python ve JavaScript ile veri odaklı, kullanıcı dostu ve sürdürülebilir yazılım çözümleri geliştiriyorum.",
   about:
     "Yakın Doğu Üniversitesi'nde %100 İngilizce Yazılım Mühendisliği eğitiminde 2. sınıfı başarıyla tamamladım. Akademik birikimimi Python ve JavaScript ile birleştirerek gerçek dünya problemlerine pratik çözümler üretiyorum. Konaklama ve hizmet sektöründe dijital dönüşümün operasyonel verimlilik ve müşteri deneyimi üzerindeki etkisine inanıyorum. Yazılım mühendisliği stajı ile öğrendiklerimi kurumsal projelere taşımayı hedefliyorum.",
-  profileImageUrl: "",
+  profileImageUrl: "/projects/profil.jpeg",
   aboutImageUrl: "",
   email: "kumfurkanenes1@gmail.com",
   phone: "05428528282",

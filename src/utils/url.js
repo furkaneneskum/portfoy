@@ -9,6 +9,8 @@ function toProjectsPath(filename) {
   return `/projects/${filename.replace(/^\/+/, "").replace(/^projects\//i, "")}`;
 }
 
+export const DEFAULT_PROFILE_IMAGE = "/projects/profil.jpeg";
+
 export function normalizeImageUrl(url) {
   const value = (url || "").trim();
   if (!value) return "";
@@ -85,4 +87,8 @@ export function resolveImageUrl(url) {
 
   const path = relativePath.startsWith("/") ? relativePath.slice(1) : relativePath;
   return `${basePath}${path}`;
+}
+
+export function resolveProfileImageUrl(url) {
+  return resolveImageUrl(url || DEFAULT_PROFILE_IMAGE);
 }

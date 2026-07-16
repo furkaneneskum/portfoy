@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { CV_LOCALES, CV_TOOLS } from "../data/cvContent";
-import { normalizeExternalUrl, resolveImageUrl } from "../utils/url";
+import { normalizeExternalUrl, resolveProfileImageUrl } from "../utils/url";
 
 const DEFAULT_PHONE = "05428528282";
 
@@ -61,9 +61,7 @@ export default function DigitalCv({ isOpen, onClose, profile, locale = "tr" }) {
   const phone = profile.phone?.trim() || DEFAULT_PHONE;
   const github = normalizeExternalUrl(profile.github);
   const linkedin = normalizeExternalUrl(profile.linkedin);
-  const profileImage = profile.profileImageUrl
-    ? resolveImageUrl(profile.profileImageUrl)
-    : null;
+  const profileImage = resolveProfileImageUrl(profile.profileImageUrl);
 
   const handlePrint = () => window.print();
 
@@ -133,17 +131,11 @@ export default function DigitalCv({ isOpen, onClose, profile, locale = "tr" }) {
           <div className="flex flex-col md:flex-row">
             <aside className="cv-sidebar w-full bg-slate-950 p-6 md:w-[34%] md:p-8 print:bg-slate-900">
               <div className="flex justify-center">
-                {profileImage ? (
-                  <img
-                    src={profileImage}
-                    alt={displayName}
-                    className="h-36 w-36 rounded-full border-4 border-yellow-500/40 object-cover shadow-lg shadow-yellow-500/10"
-                  />
-                ) : (
-                  <div className="flex h-36 w-36 items-center justify-center rounded-full border-4 border-yellow-500/40 bg-slate-900 text-3xl font-bold text-yellow-400">
-                    FEK
-                  </div>
-                )}
+                <img
+                  src={profileImage}
+                  alt={displayName}
+                  className="h-36 w-36 rounded-full border-4 border-yellow-500/40 object-cover object-center shadow-lg shadow-yellow-500/10"
+                />
               </div>
 
               <section className="mt-8">
