@@ -30,7 +30,7 @@ export default function Navbar({ profileName, onOpenCv }) {
           href="#hero"
           className="group inline-flex items-center gap-2.5 text-sm font-semibold tracking-[0.12em] text-luxury-gold uppercase transition-opacity duration-300 hover:opacity-90"
         >
-          <Logo className="h-9 w-9 shrink-0 transition-transform duration-300 group-hover:scale-105" />
+          <Logo className="h-8 w-8 shrink-0 text-yellow-400 transition-transform duration-300 group-hover:scale-105 sm:h-9 sm:w-9" />
           <span className="max-w-[140px] truncate sm:max-w-none">{profileName}</span>
         </a>
 

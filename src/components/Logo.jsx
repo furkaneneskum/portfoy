@@ -1,8 +1,4 @@
-import { useId } from "react";
-
-export default function Logo({ className = "h-8 w-8", title = "FEK monogram", decorative = false }) {
-  const gradientId = useId();
-
+export default function Logo({ className = "h-8 w-8 text-yellow-400", title = "FEK monogram", decorative = false }) {
   return (
     <svg
       viewBox="0 0 64 64"
@@ -12,16 +8,9 @@ export default function Logo({ className = "h-8 w-8", title = "FEK monogram", de
       aria-label={decorative ? undefined : title}
       xmlns="http://www.w3.org/2000/svg"
     >
-      <defs>
-        <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#F0DC8A" />
-          <stop offset="45%" stopColor="#D4AF37" />
-          <stop offset="100%" stopColor="#9A7B1A" />
-        </linearGradient>
-      </defs>
       <g
         fill="none"
-        stroke={`url(#${gradientId})`}
+        stroke="currentColor"
         strokeWidth="5.5"
         strokeLinecap="square"
         strokeLinejoin="miter"

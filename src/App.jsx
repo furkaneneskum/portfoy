@@ -1330,13 +1330,15 @@ export default function App() {
           </div>
 
           <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-4 py-1 text-xs tracking-[0.18em] text-yellow-400 uppercase">
-            <Logo className="h-4 w-4" decorative />
             Staj & Portföy
           </p>
 
-          <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
-            {profile.name}
-          </h1>
+          <div className="flex items-center justify-center gap-3 sm:gap-4">
+            <Logo className="h-10 w-10 shrink-0 text-yellow-400 sm:h-12 sm:w-12 md:h-14 md:w-14" decorative />
+            <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
+              {profile.name}
+            </h1>
+          </div>
           <p className="mt-4 text-lg text-gray-300 sm:text-2xl">{profile.title}</p>
           <p className="mt-6 max-w-3xl text-base leading-relaxed text-gray-300 sm:text-lg">
             {profile.slogan}
@@ -1522,7 +1524,7 @@ export default function App() {
       >
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 text-center sm:flex-row sm:px-6 lg:px-8 sm:text-left">
           <div className="flex items-start gap-3">
-            <Logo className="mt-0.5 h-8 w-8 shrink-0 opacity-90" decorative />
+            <Logo className="mt-0.5 h-8 w-8 shrink-0 text-yellow-400 opacity-90" decorative />
             <div>
               <p className="text-sm text-gray-300">
                 Yakın Doğu Üniversitesi — Yazılım Mühendisliği (İngilizce) · 2. sınıf tamamlandı
